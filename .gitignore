@@ -1,3 +1,5 @@
+#UN files
+*~
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -109,7 +111,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+*.env
 # Spyder project settings
 .spyderproject
 .spyproject
