@@ -1,39 +1,49 @@
 import logging
 from models import app
-from flask_security import Security, current_user, Blueprint, current_app, request
+from flask_security import Security
+from flask import Blueprint, current_app, request
 from flask_login import user_logged_in
+from jose import jwt
 import config
-import workos
-
-workos.api_key = config.WORK_OS_API_KEY
-workos.project_id = config.WORK_OS_PROJECT_ID
+import requests
 
 # define the blueprint variable
 app_auth_blueprint = Blueprint("app_auth", __name__)
 
 
-@app_top_level_blueprint.route("/login", methods=["GET"])
-def sso_login():
-    if current_user.is_authenticated:
-        return redirect("/dashboard")
-    redirect_uri = config.API_ENDPOINT + "/auth/callback"
-    redirect_url = workos.client.sso.get_authorization_url(
-        redirect_uri=redirect_uri,
-        state={},
-        provider=workos.utils.connection_types.ConnectionType.GoogleOAuth,
+@app_auth_blueprint.route("/login", methods=["POST"])
+def login(name=None):
+    req = request.get_json()
+
+    # Getting jwt key
+    r = requests.get(url=config.COTTER_JWKS_URL)
+    data = r.json()
+    current_app.logger.info(data)
+    public_key = data["keys"][0]
+    # Getting access token and validate it
+    token = req["oauth_token"]["access_token"]
+    resp = jwt.decode(
+        token, public_key, algorithms="ES256", audience=config.COTTER_API_KEY
     )
-    return redirect(redirect_url)
-
-
-@app_top_level_blueprint.route("/callback", methods=["GET"])
-def sso_redirect():
-    code = request.args.get("code")
-    try:
-        profile = client.sso.get_profile(code)
-        user = User.objects.get(email=profile.email, active=True)
-        if user:
-            flask_security.utils.login_user(user)
-            return redirect("/dashboard")
-        return redirect("/login")
-    except Exception as e:
-        return redirect("/login")
+    current_app.logger.info(resp)
+    user = models.User.create_find_user(resp["identifier"])
+    # return details, then add token if needed
+    if user:
+        token = user.create_access_token()
+        return (
+            dumps(
+                {
+                    "ok": True,
+                    "message": "Authenticated",
+                    "userToken": token,
+                    "userId": str(user.id),
+                    "expiresIn": CONFIG.JWT_ACCESS_TOKEN_EXPIRES,
+                    "userEmail": user.email,
+                }
+            ),
+            200,
+        )
+    return (
+        dumps({"ok": False, "message": "Invalid username or password"}),
+        401,
+    )

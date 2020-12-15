@@ -4,7 +4,6 @@ Flask API exposing the core endpoints needed to interact with the external API c
 from models import BlacklistedToken, jwt, app
 from app_blueprints.app_auth import app_auth_blueprint
 
-
 # register blueprints
 app.register_blueprint(app_auth_blueprint, url_prefix="/auth")
 
