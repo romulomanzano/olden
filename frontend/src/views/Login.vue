@@ -23,7 +23,6 @@ export default {
   methods: {},
   mounted() {
     var cotter = new Cotter("7b2b5c20-0fa9-417e-9a89-284ebe126135"); // 👈 Specify your API KEY ID here
-
     cotter
       .signInWithLink() // to send a verification code, use .signInWithOTP()
       .showEmailForm() // to send via phone number use .showPhoneForm()
@@ -31,7 +30,9 @@ export default {
         //Login to backend
         axios
           .post("http://localhost:9090/auth/login", payload)
-          .then((resp) => console.log("Response From Server", resp))
+          .then((res) => {
+            this.$store.dispatch("login", res.data);
+          })
           .catch((err) => console.log(err));
       });
   },

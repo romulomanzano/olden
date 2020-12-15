@@ -1,5 +1,5 @@
 import logging
-from models import app
+from models import app, User
 from flask_security import Security
 from flask import Blueprint, current_app, request
 from flask_login import user_logged_in
@@ -9,6 +9,7 @@ import requests
 
 # define the blueprint variable
 app_auth_blueprint = Blueprint("app_auth", __name__)
+from bson.json_util import dumps
 
 
 @app_auth_blueprint.route("/login", methods=["POST"])
@@ -26,7 +27,7 @@ def login(name=None):
         token, public_key, algorithms="ES256", audience=config.COTTER_API_KEY
     )
     current_app.logger.info(resp)
-    user = models.User.create_find_user(resp["identifier"])
+    user = User.create_find_user(resp["identifier"])
     # return details, then add token if needed
     if user:
         token = user.create_access_token()
@@ -37,7 +38,7 @@ def login(name=None):
                     "message": "Authenticated",
                     "userToken": token,
                     "userId": str(user.id),
-                    "expiresIn": CONFIG.JWT_ACCESS_TOKEN_EXPIRES,
+                    "expiresIn": config.JWT_ACCESS_TOKEN_EXPIRES,
                     "userEmail": user.email,
                 }
             ),

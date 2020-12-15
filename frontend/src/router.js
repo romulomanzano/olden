@@ -2,7 +2,6 @@ import Vue from "vue";
 import Router from "vue-router";
 import DashboardLayout from "@/layout/DashboardLayout";
 import AuthLayout from "@/layout/AuthLayout";
-import DemoLayout from "@/layout/DemoLayout";
 import store from "./store";
 
 Vue.use(Router);

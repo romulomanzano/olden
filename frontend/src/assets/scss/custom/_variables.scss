@@ -75,10 +75,10 @@ $colors: map-merge(
   $colors
 );
 
-//checkout: https://coolors.co/102542-f87060-cdd7d6-b3a394-ffffff
+//checkout: https://coolors.co/102542-f6f9fc-cdd7d6-b3a394-ffffff
 $default: #cdd7d6 !default;
 $primary: #102542 !default;
-$secondary: #f87060 !default;
+$secondary: #f6f9fc !default;
 $success: $green !default;
 $info: $teal !default;
 $warning: $orange !default;
@@ -136,7 +136,7 @@ $shape-colors: map-merge(
   (
     "default": #cdd7d6,
     "primary": #102542,
-    "secondary": #f87060,
+    "secondary": #f6f9fc,
     "neutral": #e9ecef,
     "blue-gray": #b2cbe1,
   ),

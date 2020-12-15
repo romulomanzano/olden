@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "./axios-auth";
 import router from "./router";
+import Cotter from "cotter";
 
 Vue.use(Vuex);
 
@@ -94,8 +95,10 @@ export default new Vuex.Store({
       });
       router.replace("/dashboard");
     },
-    logout({ commit }) {
+    async logout({ commit }) {
       commit("clearAuthData");
+      var cotter = new Cotter("7b2b5c20-0fa9-417e-9a89-284ebe126135");
+      await cotter.logOut();
       localStorage.removeItem("expirationDate");
       localStorage.removeItem("userId");
       localStorage.removeItem("userToken");
