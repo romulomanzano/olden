@@ -23,6 +23,14 @@
         />
         <sidebar-item
           :link="{
+            name: 'Virtual Events',
+            icon: 'fa fa-life-ring text-primary',
+            path: '/virtual_events',
+          }"
+        />
+
+        <sidebar-item
+          :link="{
             name: 'Safety Plans',
             icon: 'fa fa-life-ring text-red',
             path: '/safety_plans',

@@ -13,7 +13,6 @@
   </div>
 </template>
 <script>
-import { email, required, minLength, sameAs } from "vuelidate/lib/validators";
 import axios from "../axios-auth";
 import Cotter from "cotter";
 
@@ -29,11 +28,11 @@ export default {
       .then((payload) => {
         //Login to backend
         axios
-          .post("http://localhost:9090/auth/login", payload)
+          .post("auth/login", payload)
           .then((res) => {
             this.$store.dispatch("login", res.data);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => this.$message.error(err.response.data.message));
       });
   },
 };

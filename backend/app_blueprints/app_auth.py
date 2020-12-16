@@ -26,7 +26,6 @@ def login(name=None):
     resp = jwt.decode(
         token, public_key, algorithms="ES256", audience=config.COTTER_API_KEY
     )
-    current_app.logger.info(resp)
     user = User.create_find_user(resp["identifier"])
     # return details, then add token if needed
     if user:

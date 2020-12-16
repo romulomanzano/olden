@@ -52,8 +52,8 @@ export default {
     toggleMenu() {
       this.showMenu = !this.showMenu;
     },
-    async logout() {
-      await this.$store.dispatch("logout", {});
+    logout() {
+      this.$store.dispatch("logout", {});
     },
   },
 };

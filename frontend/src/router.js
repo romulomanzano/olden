@@ -49,6 +49,12 @@ export default new Router({
             import(/* webpackChunkName: "demo" */ "./views/SafetyPlans.vue"),
         },
         {
+          path: "/virtual_events",
+          name: "Virtual Events",
+          component: () =>
+            import(/* webpackChunkName: "demo" */ "./views/VirtualEvents.vue"),
+        },
+        {
           path: "/safety_plan",
           name: "safety plan",
           component: () =>
