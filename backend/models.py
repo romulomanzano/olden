@@ -54,6 +54,7 @@ class User(db.DynamicDocument, HelperMixin):
     first_name = db.StringField()
     last_name = db.StringField()
     registered_date = db.DateTimeField()
+    organizations = db.ListField(db.ReferenceField("Organization"))
 
     def create_access_token(self):
         """Generate access token based on what's considered unique identifier"""
@@ -73,3 +74,64 @@ class User(db.DynamicDocument, HelperMixin):
         )
         user.save()
         return user
+
+
+class EventAttendee(db.DynamicDocument, HelperMixin):
+    first_name = db.StringField()
+    last_name = db.StringField()
+    phone_number = db.StringField()
+    email = db.StringField(max_length=255)
+
+
+class Organization(db.DynamicDocument, HelperMixin):
+    name = db.StringField()
+
+
+class VirtualEvent(db.DynamicDocument, HelperMixin):
+    """
+    This specifies a safety plan which is a relationship between
+    users, devices, and alert settings.
+
+    For simplicity we'll enforce a uniqueness on phone_number for ACTIVE contacts
+    at the user level, however, we will allow a number to be re-entered in contact
+    list if archived.
+    """
+
+    name = db.StringField()
+    date = db.DateTimeField()
+    original_timezone_name = db.StringField()
+    estimated_duration_minutes = db.IntField()
+    attendees = db.ListField(db.ReferenceField("EventAttendee"))
+    created_by = db.ReferenceField("User")
+    created_date = db.DateTimeField()
+    canceled = db.BooleanField(default=False)
+    canceled_date = db.DateTimeField()
+    canceled_by = db.ReferenceField("User")
+
+    @staticmethod
+    def get_all_user_events(user):
+        events = VirtualEvent.objects(
+            Q(canceled__ne=True)
+            & (Q(created_by=user) | Q(organization__in=user.organizations))
+        )
+        return events
+
+    @staticmethod
+    def create(**kwargs):
+        event = VirtualEvent(**kwargs)
+        event.save()
+        return event
+
+    def cancel(self, user):
+        self.canceled = True
+        self.canceled_date = datetime.datetime.utcnow()
+        self.canceled_by = user
+        self.save()
+
+    def add_attendee(self, attendee):
+        self.attendees.append(attendee)
+        self.save()
+
+    def remove_attendee(self, attendee):
+        self.attendee.remove(attendee)
+        self.save()

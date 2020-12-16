@@ -4,6 +4,9 @@ import os
 # Import variables
 load_dotenv(find_dotenv())
 
+MODE = os.getenv("MODE")
+if MODE is None:
+    raise ValueError("MODE can't be None")
 DATABASE_NAME = "olden"
 LOG_LEVEL = "INFO"
 API_ENDPOINT = "localhost:5000"
@@ -21,3 +24,19 @@ JWT_ACCESS_TOKEN_EXPIRES = 86400 * 1  # 1 day in seconds
 JWT_REFRESH_TOKEN_EXPIRES = 86400 * 5  # 5 day in seconds
 JWT_HEADER_TYPE = "Bearer"
 JWT_HEADER_NAME = "Authorization"
+if MODE == "production":
+    TEST = False
+    print("RUNNING IN PRODUCTION MODE")
+else:
+    TEST = True
+    print("RUNNING IN DEVELOPMENT MODE")
+
+# only allow calls originating from localhost 8080. this will change later
+if TEST:
+    WEB_ONLY_CORS_ORIGINS = ["http://localhost:8080", "http://localhost:5000"]
+    API_CORS_ORIGINS = ["http://localhost:8080", "http://localhost:5000"]
+else:
+    WEB_ONLY_CORS_ORIGINS = [
+        "https://web.olden.ai",
+    ]
+    API_CORS_ORIGINS = ["*"]
