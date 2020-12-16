@@ -281,3 +281,25 @@ export default {
   },
 };
 </script>
+<style>
+.vs__search,
+.vs__search:focus {
+  margin: 0px 0 0;
+  padding: 0 0px;
+  background: white;
+}
+
+.vs--single .vs__selected {
+  /* background-color: transparent; */
+  /* border-color: transparent; */
+  background-color: white;
+  border-color: white;
+}
+
+.vs__selected {
+  /* margin: 4px 2px 0; */
+  /* padding: 0 .25em; */
+  margin: 0;
+  padding: 0;
+}
+</style>
