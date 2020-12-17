@@ -40,7 +40,7 @@
                 v-model="modalVirtualEventName"
                 placeholder="Event Name"
                 @blur="$v.modalVirtualEventName.$touch()"
-                :error="isValidPlanNameError"
+                :error="isValidEventNameError"
               >
               </base-input>
               <base-input addon-left-icon="ni ni-calendar-grid-58">
@@ -51,15 +51,10 @@
                   :config="{ allowInput: true, enableTime: true }"
                   class="form-control datepicker"
                   v-model="modalVirtualDate"
+                  @blur="$v.modalVirtualDate.$touch()"
+                  :error="isValidEventDateError"
                 >
                 </flat-picker>
-              </base-input>
-              <base-input>
-                <v-select
-                  v-model="modalVirtualDateTimezone"
-                  label="countryName"
-                  :options="timezones"
-                ></v-select>
               </base-input>
               <div class="text-center">
                 <base-button type="danger" class="my-4" @click="closeModal"
@@ -89,7 +84,7 @@
         <template slot="columns">
           <th>Event Name</th>
           <th>Date</th>
-          <th>Registered</th>
+          <th>Created</th>
           <th>Duration (Minutes)</th>
           <th></th>
         </template>
@@ -98,13 +93,18 @@
           <th scope="row">
             {{ row.name | capitalize }}
           </th>
-          <td class="budget">
-            {{ new Date(row.date.$date) | moment("dddd, MMMM Do YYYY") }}
+          <td class="budget" v-if="row.date">
+            {{ toMomentLocale(row.date) }}
           </td>
-          <td class="budget">
-            {{
-              new Date(row.registered_date.$date) | moment("dddd, MMMM Do YYYY")
-            }}
+          <td v-else>
+            N/A
+          </td>
+
+          <td class="budget" v-if="row.created_date">
+            {{ toMomentLocale(row.created_date) }}
+          </td>
+          <td v-else>
+            N/A
           </td>
           <th scope="row">
             {{ row.estimated_duration_minutes }}
@@ -165,9 +165,7 @@ import axios from "../../axios-auth";
 import { required } from "vuelidate/lib/validators";
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import moment_timezone from "moment-timezone";
-import vSelect from "vue-select";
-import "vue-select/dist/vue-select.css";
+import moment from "moment";
 
 const isValidStringWithSpaces = (value) => /^[a-zA-Z\s]*$/.test(value);
 
@@ -175,7 +173,6 @@ export default {
   name: "virtual-events-table",
   components: {
     flatPicker,
-    vSelect,
   },
   props: {
     type: {
@@ -184,7 +181,6 @@ export default {
     title: String,
   },
   mounted() {
-    this.timezones = moment_timezone.tz.names();
     this.getUserVirtualEvents();
   },
   data() {
@@ -193,11 +189,9 @@ export default {
       modalVirtualEventName: null,
       modalVirtualDate: null,
       modalVirtualEventMode: null,
-      modalVirtualDateTimezone: null,
       archiveVirtualEventMode: false,
       archiveVirtualEventId: null,
       recipientList: null,
-      timezones: [],
     };
   },
   validations: {
@@ -205,19 +199,38 @@ export default {
       required,
       isName: isValidStringWithSpaces,
     },
+    modalVirtualDate: {
+      required,
+    },
   },
   computed: {
     isModalFormValid() {
-      return !this.$v.modalVirtualEventName.$invalid;
+      return (
+        !this.$v.modalVirtualEventName.$invalid &&
+        !this.$v.modalVirtualDate.$invalid
+      );
     },
-    isValidPlanNameError() {
+    isValidEventNameError() {
       if (this.modalVirtualEventMode && this.$v.modalVirtualEventName.$error) {
         return "Must not be empty and only contain letters.";
       }
       return "";
     },
+    isValidEventDateError() {
+      if (this.modalVirtualDate && this.$v.modalVirtualDate.$error) {
+        return "You must set a date and a time.";
+      }
+      return "";
+    },
+    modalVirtualDateUtc: function () {
+      // `this` points to the vm instance
+      return moment(this.modalVirtualDate).utc().format("YYYY-MM-DDTHH:mm[Z]");
+    },
   },
   methods: {
+    toMomentLocale(input) {
+      return moment(input).format("LLL");
+    },
     getUserVirtualEvents() {
       axios
         .get("virtual_events/user/virtual_events", {})
@@ -227,7 +240,7 @@ export default {
         .catch((error) => this.$message.error(error.response.data.message));
     },
     setVirtualEvents(data) {
-      this.VirtualEventList = data;
+      this.VirtualEventList = data.events;
     },
     closeModal() {
       this.modalVirtualEventMode = false;
@@ -240,7 +253,8 @@ export default {
     submitVirtualEvent() {
       //post to backend
       let data = {
-        modalVirtualEventName: this.modalVirtualEventName,
+        eventName: this.modalVirtualEventName,
+        eventDatetime: this.modalVirtualDateUtc,
       };
       this.closeModal();
       //depending of the value either post new or update virtual event

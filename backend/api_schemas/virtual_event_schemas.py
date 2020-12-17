@@ -1,4 +1,4 @@
-from schema_utils import coerce_date_to_string
+from .schema_utils import coerce_date_to_string, coerce_into_datetime
 
 oid_schema = {"$oid": {"type": "string"}}
 
@@ -20,4 +20,10 @@ event_list_schema = {
         "type": "list",
         "schema": {"type": "dict", "schema": event_base_schema},
     }
+}
+
+
+event_input_schema = {
+    "name": {"type": "string"},
+    "date": {"type": "datetime", "coerce": coerce_into_datetime},
 }
