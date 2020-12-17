@@ -17,7 +17,7 @@
         <sidebar-item
           :link="{
             name: 'User Profile',
-            icon: 'ni ni-single-02 text-yellow',
+            icon: 'ni ni-single-02 text-blue',
             path: '/profile',
           }"
         />
@@ -28,15 +28,6 @@
             path: '/virtual_events',
           }"
         />
-
-        <sidebar-item
-          :link="{
-            name: 'Safety Plans',
-            icon: 'fa fa-life-ring text-red',
-            path: '/safety_plans',
-          }"
-        />
-
         <template>
           <li class="nav-item">
             <router-link
@@ -45,12 +36,12 @@
               target=""
               href=""
               @click.native="
-                comingSoonMessage('Virtual Care is not yet available.')
+                comingSoonMessage('This feature is not yet available.')
               "
             >
               <template>
-                <i class="fa fa-laptop-medical text-purple"></i>
-                <span class="nav-link-text">Virtual Care</span>
+                <i class="fa fa-inbox text-purple"></i>
+                <span class="nav-link-text">Members Messages</span>
               </template>
             </router-link>
           </li>
@@ -61,14 +52,29 @@
               target=""
               href=""
               @click.native="
-                comingSoonMessage(
-                  'Companionship Programs are not yet available.'
-                )
+                comingSoonMessage('This feature is not yet available.')
               "
             >
               <template>
-                <i class="fa fa-user-friends text-gray"></i>
-                <span class="nav-link-text">Recreational Plans</span>
+                <i class="fa fa-envelope text-gray"></i>
+                <span class="nav-link-text">Mail-in Orders</span>
+              </template>
+            </router-link>
+          </li>
+
+          <li class="nav-item">
+            <router-link
+              to=""
+              class="nav-link"
+              target=""
+              href=""
+              @click.native="
+                comingSoonMessage('This feature is not yet available.')
+              "
+            >
+              <template>
+                <i class="fa fa-users text-grey-dark"></i>
+                <span class="nav-link-text">Team Management</span>
               </template>
             </router-link>
           </li>

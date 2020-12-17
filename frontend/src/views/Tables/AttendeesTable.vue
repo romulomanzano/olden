@@ -26,10 +26,7 @@
           <th>First Name</th>
           <th>Last Name</th>
           <th>Email</th>
-
           <th v-if="phoneRequired">Phone Number</th>
-          <th v-if="phoneRequired">Phone Verified</th>
-
           <th></th>
         </template>
 
@@ -47,16 +44,12 @@
           <th v-if="phoneRequired" scope="row">
             {{ row.phone_number }}
           </th>
-          <th v-if="phoneRequired" scope="row">
-            {{ row.phone_number_verified }}
-          </th>
-
           <td class="text-right">
             <base-button
               type="danger"
               data-toggle="tooltip"
               data-placement="top"
-              title="Remove from plan"
+              title="Remove from event"
               outline
               size="sm"
               icon="fa fa-trash"
@@ -155,12 +148,11 @@
         <div class="py-3 text-center">
           <i class="ni ni-bell-55 ni-3x"></i>
           <h4 class="heading mt-4">
-            Remove {{ userType | capitalize }} from Plan
+            Remove {{ userType | capitalize }} from Event
           </h4>
           <p>
-            This will remove this {{ userType }} from the safety plan, we will
-            no longer be able to alert caring members regarding this specific
-            {{ userType }}.
+            This will remove this {{ userType }} from the event, we will send
+            them a notification letting them know the event has been canceled.
           </p>
         </div>
 
@@ -189,15 +181,15 @@ const isValidStringWithSpaces = (value) => /^[a-zA-Z\s]*$/.test(value);
 const isPhone = (value) => /^[0-9]{10}$/.test(value);
 
 export default {
-  name: "safety-plan-user-table",
+  name: "attendees-table",
   props: {
-    planId: {
+    eventId: {
       type: String,
-      description: "Plan id.",
+      description: "Event id.",
     },
     userType: {
       type: String,
-      description: "Either recipient or caregiver",
+      description: "Either attendee or organizer",
     },
     phoneRequired: {
       type: Boolean,
@@ -290,8 +282,8 @@ export default {
       };
       axios
         .post(
-          "safety/user/safety_plan/" +
-            this.planId +
+          "virtual_events/user/virtual_event/" +
+            this.eventId +
             "/" +
             this.userType +
             "/add",
@@ -306,8 +298,8 @@ export default {
     getUsers() {
       axios
         .get(
-          "safety/user/safety_plan/" +
-            this.planId +
+          "virtual_events/user/virtual_event/" +
+            this.eventId +
             "/" +
             this.userType +
             "s/get",
@@ -348,8 +340,8 @@ export default {
       this.closeRemoveUserModal();
       axios
         .post(
-          "safety/user/safety_plan/" +
-            this.planId +
+          "virtual_events/user/virtual_event/" +
+            this.eventId +
             "/" +
             this.userType +
             "/remove",

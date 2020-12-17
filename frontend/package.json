@@ -18,6 +18,7 @@
     "core-js": "2.6.5",
     "cotter": "^0.3.26",
     "flatpickr": "4.5.7",
+    "moment-timezone": "^0.5.32",
     "mqtt": "^4.2.1",
     "nouislider": "13.1.4",
     "numeral": "^2.0.6",

@@ -43,22 +43,18 @@ export default new Router({
             import(/* webpackChunkName: "demo" */ "./views/UserProfile.vue"),
         },
         {
-          path: "/safety_plans",
-          name: "safety plans",
-          component: () =>
-            import(/* webpackChunkName: "demo" */ "./views/SafetyPlans.vue"),
-        },
-        {
           path: "/virtual_events",
           name: "Virtual Events",
           component: () =>
             import(/* webpackChunkName: "demo" */ "./views/VirtualEvents.vue"),
         },
         {
-          path: "/safety_plan",
-          name: "safety plan",
+          path: "/virtual_event",
+          name: "virtual event",
           component: () =>
-            import(/* webpackChunkName: "demo" */ "./views/SafetyPlanForm.vue"),
+            import(
+              /* webpackChunkName: "demo" */ "./views/VirtualEventForm.vue"
+            ),
         },
       ],
     },
@@ -84,12 +80,6 @@ export default new Router({
           name: "login",
           component: () =>
             import(/* webpackChunkName: "demo" */ "./views/Login.vue"),
-        },
-        {
-          path: "/register",
-          name: "register",
-          component: () =>
-            import(/* webpackChunkName: "demo" */ "./views/Register.vue"),
         },
       ],
     },

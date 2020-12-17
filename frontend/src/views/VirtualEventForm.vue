@@ -11,7 +11,7 @@
             <div slot="header" class="bg-white border-0">
               <div class="row align-items-center">
                 <div class="col-8">
-                  <h3 class="mb-0">{{ planName }}</h3>
+                  <h3 class="mb-0">{{ eventName }}</h3>
                 </div>
                 <div class="col text-right">
                   <base-button
@@ -22,7 +22,7 @@
                     type="secondary"
                     data-toggle="tooltip"
                     data-placement="left"
-                    title="Edit Plan Name"
+                    title="Edit Event Name"
                     @click="openForm"
                   >
                   </base-button>
@@ -32,36 +32,19 @@
             <template>
               <form @submit.prevent>
                 <tabs>
-                  <tab-pane title="Recipients">
+                  <tab-pane title="Attendees">
                     <div class="col">
-                      <safety-plan-user-table
-                        :planId="planId"
-                        userType="recipient"
-                      ></safety-plan-user-table>
-                    </div>
-                  </tab-pane>
-                  <tab-pane title="Caregivers">
-                    <div class="col">
-                      <safety-plan-user-table
-                        :planId="planId"
-                        userType="caregiver"
+                      <attendees-table
+                        :eventId="eventId"
+                        userType="attendee"
                         :phoneRequired="true"
-                      ></safety-plan-user-table>
-                    </div>
-                  </tab-pane>
-                  <tab-pane title="Devices">
-                    <div class="col">
-                      <devices-table
-                        title="Registered Devices"
-                        titleType="h6"
-                        :planIdFilter="planId"
-                      ></devices-table>
+                      ></attendees-table>
                     </div>
                   </tab-pane>
                   <tab-pane title="Alert Settings">
                     <div class="col">
                       <alert-settings-table
-                        :planId="planId"
+                        :eventId="eventId"
                       ></alert-settings-table>
                     </div>
                   </tab-pane>
@@ -83,15 +66,15 @@
                 >
                   <template>
                     <div class="text-center text-muted mb-4">
-                      <h3>New Plan Name</h3>
+                      <h3>New Event Name</h3>
                     </div>
                     <form role="form">
                       <base-input
                         alternative
                         class="mb-3"
-                        v-model="editPlanName"
-                        @blur="$v.editPlanName.$touch()"
-                        :error="planNameError"
+                        v-model="editEventName"
+                        @blur="$v.editEventName.$touch()"
+                        :error="eventNameError"
                       >
                       </base-input>
                       <div class="text-center">
@@ -123,49 +106,47 @@
 <script>
 import { required } from "vuelidate/lib/validators";
 import axios from "../axios-auth";
-import SafetyPlanUserTable from "./Tables/SafetyPlanUserTable";
-import DevicesTable from "./Tables/DevicesTable";
+import AttendeesTable from "./Tables/AttendeesTable";
 import AlertSettingsTable from "./Tables/AlertSettingsTable";
 
 const isValidStringWithSpaces = (value) => /^[a-zA-Z\s]*$/.test(value);
 
 export default {
-  name: "safety-plan-form",
+  name: "virtual-event-form",
   components: {
-    SafetyPlanUserTable,
-    DevicesTable,
+    AttendeesTable,
     AlertSettingsTable,
   },
 
   data() {
     return {
-      planName: "",
-      planId: null,
+      eventName: "",
+      eventId: null,
       editMode: false,
-      editPlanName: null,
+      editEventName: null,
     };
   },
   beforeMount() {
     if (this.$route.query.id) {
-      this.planId = this.$route.query.id;
-      this.getSafetyPlan();
+      this.eventId = this.$route.query.id;
+      this.getVirtualEvent();
     } else {
-      this.$router.push("safety_plans");
+      this.$router.push("virtual_events");
     }
   },
   computed: {
     isFormValid() {
-      return !this.$v.editPlanName.$invalid;
+      return !this.$v.editEventName.$invalid;
     },
-    planNameError() {
-      if (this.editMode && this.$v.editPlanName.$error) {
+    eventNameError() {
+      if (this.editMode && this.$v.editEventName.$error) {
         return "Must not be empty and only contain letters.";
       }
       return "";
     },
   },
   validations: {
-    editPlanName: {
+    editEventName: {
       required,
       isName: isValidStringWithSpaces,
     },
@@ -174,41 +155,44 @@ export default {
     cancelEdit() {
       this.editMode = false;
       this.$v.$reset();
-      this.editPlanName = "";
+      this.editEventName = "";
     },
     openForm() {
-      this.editPlanName = "";
+      this.editEventName = "";
       this.$v.$reset();
       this.editMode = true;
     },
     submitForm() {
       this.editMode = false;
       let data = {
-        planInfo: {
-          name: this.editPlanName,
+        eventInfo: {
+          name: this.editEventName,
         },
       };
       axios
-        .post("safety/user/safety_plan/" + this.planId + "/update", data)
+        .post(
+          "virtual_events/user/virtual_event/" + this.eventId + "/update",
+          data
+        )
         .then((res) => {
           this.$message.success(res.data.message);
-          this.getSafetyPlan();
+          this.getVirtualEvent();
         })
         .catch((error) => this.$message.error(error.response.data.message));
     },
-    getSafetyPlan() {
+    getVirtualEvent() {
       axios
-        .get("safety/user/safety_plan/" + this.planId, {})
+        .get("virtual_events/user/virtual_event/" + this.eventId, {})
         .then((res) => {
-          this.setPlan(res.data);
+          this.setEvent(res.data);
         })
         .catch((error) => this.$message.error(error.response.data.message));
     },
-    setPlan(data) {
+    setEvent(data) {
       //personal info
-      let planInfo = data.plan;
-      this.planName = planInfo.name;
-      this.planId = planInfo._id.$oid;
+      let eventInfo = data.event;
+      this.eventName = eventInfo.name;
+      this.eventId = eventInfo._id.$oid;
     },
   },
 };

@@ -35,15 +35,9 @@
         <!-- Navbar items -->
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <router-link class="nav-link nav-link-icon" to="/register">
-              <i class="ni ni-circle-08"></i>
-              <span class="nav-link-inner--text">Register</span>
-            </router-link>
-          </li>
-          <li class="nav-item">
             <router-link class="nav-link nav-link-icon" to="/login">
               <i class="ni ni-key-25"></i>
-              <span class="nav-link-inner--text">Login</span>
+              <span class="nav-link-inner--text">Login or Register</span>
             </router-link>
           </li>
         </ul>

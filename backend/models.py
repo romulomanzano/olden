@@ -104,6 +104,7 @@ class VirtualEvent(db.DynamicDocument, HelperMixin):
     attendees = db.ListField(db.ReferenceField("EventAttendee"))
     created_by = db.ReferenceField("User")
     created_date = db.DateTimeField()
+    created_under_timezone = db.StringField()
     canceled = db.BooleanField(default=False)
     canceled_date = db.DateTimeField()
     canceled_by = db.ReferenceField("User")

@@ -165,7 +165,7 @@ import axios from "../../axios-auth";
 import { required } from "vuelidate/lib/validators";
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import moment from "moment";
+import moment from "moment-timezone";
 
 const isValidStringWithSpaces = (value) => /^[a-zA-Z\s]*$/.test(value);
 
@@ -182,6 +182,7 @@ export default {
   },
   mounted() {
     this.getUserVirtualEvents();
+    this.localTimezone = moment.tz.guess();
   },
   data() {
     return {
@@ -189,6 +190,7 @@ export default {
       modalVirtualEventName: null,
       modalVirtualDate: null,
       modalVirtualEventMode: null,
+      localTimezone: null,
       archiveVirtualEventMode: false,
       archiveVirtualEventId: null,
       recipientList: null,
@@ -255,6 +257,7 @@ export default {
       let data = {
         eventName: this.modalVirtualEventName,
         eventDatetime: this.modalVirtualDateUtc,
+        createdUnderTimezone: this.localTimezone,
       };
       this.closeModal();
       //depending of the value either post new or update virtual event

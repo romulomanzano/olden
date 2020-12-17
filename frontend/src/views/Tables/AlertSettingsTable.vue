@@ -10,24 +10,24 @@
     <div>
       <base-checkbox
         class="mb-3"
-        v-model="alertSettings.inactivity"
+        v-model="alertSettings.sms"
         :disabled="updatesDisabled"
       >
-        Inactivity Alerts
+        SMS Alerts
       </base-checkbox>
       <base-checkbox
         class="mb-3"
-        v-model="alertSettings.fall_detection"
+        v-model="alertSettings.email"
         :disabled="updatesDisabled"
       >
-        Fall Detection Alerts
+        Email
       </base-checkbox>
       <base-checkbox
         class="mb-3"
-        v-model="alertSettings.daily_report"
+        v-model="alertSettings.prerecorded_voice"
         :disabled="updatesDisabled"
       >
-        Daily Summary Report
+        Pre-recorded Voice Alerts
       </base-checkbox>
       <template v-if="changesMade">
         <base-button
@@ -46,11 +46,11 @@
 import axios from "../../axios-auth";
 
 export default {
-  name: "safety-plan-user-table",
+  name: "alert-settings-table",
   props: {
-    planId: {
+    eventId: {
       type: String,
-      description: "Plan id.",
+      description: "Event id.",
     },
   },
   data() {
@@ -66,11 +66,10 @@ export default {
   computed: {
     changesMade() {
       return (
-        (this.originalSettings.fall_detection !==
-          this.alertSettings.fall_detection) |
-        (this.originalSettings.daily_report !==
-          this.alertSettings.daily_report) |
-        (this.originalSettings.inactivity !== this.alertSettings.inactivity)
+        (this.originalSettings.sms !== this.alertSettings.sms) |
+        (this.originalSettings.email !== this.alertSettings.email) |
+        (this.originalSettings.prerecorded_voice !==
+          this.alertSettings.prerecorded_voice)
       );
     },
   },
@@ -85,14 +84,16 @@ export default {
       this.disableUpdates();
       let data = {
         alertSettings: {
-          inactivity: this.alertSettings.inactivity,
-          fall_detection: this.alertSettings.fall_detection,
-          daily_report: this.alertSettings.daily_report,
+          sms: this.alertSettings.sms,
+          email: this.alertSettings.email,
+          prerecorded_voice: this.alertSettings.prerecorded_voice,
         },
       };
       axios
         .post(
-          "safety/user/safety_plan/" + this.planId + "/alert_settings/update",
+          "virtual_events/user/virtual_event/" +
+            this.eventId +
+            "/alert_settings/update",
           data
         )
         .then((res) => {
@@ -104,7 +105,9 @@ export default {
     getAlertSettings() {
       axios
         .get(
-          "safety/user/safety_plan/" + this.planId + "/alert_settings/get",
+          "virtual_events/user/virtual_event/" +
+            this.eventId +
+            "/alert_settings/get",
           {}
         )
         .then((res) => {

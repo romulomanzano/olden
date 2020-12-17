@@ -49,6 +49,7 @@ def add_new_virtual_event():
             name=event_input.get("eventName"),
             date=event_input.get("eventDatetime"),
             created_date=datetime.datetime.utcnow(),
+            created_under_timezone=event_input.get("createdUnderTimezone"),
             created_by=user,
         )
         return (
