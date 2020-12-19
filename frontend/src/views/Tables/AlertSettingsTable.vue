@@ -25,7 +25,7 @@
       <base-checkbox
         class="mb-3"
         v-model="alertSettings.prerecorded_voice"
-        :disabled="updatesDisabled"
+        :disabled="true"
       >
         Pre-recorded Voice Alerts
       </base-checkbox>
@@ -91,7 +91,9 @@ export default {
       };
       axios
         .post(
-          "virtual_events/user/virtual_event/" +
+          "organization/" +
+            this.$store.state.organizationId +
+            "/virtual_events/" +
             this.eventId +
             "/alert_settings/update",
           data
@@ -105,9 +107,11 @@ export default {
     getAlertSettings() {
       axios
         .get(
-          "virtual_events/user/virtual_event/" +
+          "organization/" +
+            this.$store.state.organizationId +
+            "/virtual_events/" +
             this.eventId +
-            "/alert_settings/get",
+            "/alert_settings",
           {}
         )
         .then((res) => {

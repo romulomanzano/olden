@@ -29,6 +29,19 @@
                 </div>
               </div>
             </div>
+            <div class="row">
+              <div class="col">
+                <h6 class="heading-small text-muted mb-4">
+                  When: {{ eventDate }}
+                </h6>
+              </div>
+
+              <div class="col">
+                <h6 class="heading-small text-muted mb-4">
+                  Duration: {{ eventInfo.estimated_duration_minutes }} minutes
+                </h6>
+              </div>
+            </div>
             <template>
               <form @submit.prevent>
                 <tabs>
@@ -108,6 +121,7 @@ import { required } from "vuelidate/lib/validators";
 import axios from "../axios-auth";
 import AttendeesTable from "./Tables/AttendeesTable";
 import AlertSettingsTable from "./Tables/AlertSettingsTable";
+import moment from "moment-timezone";
 
 const isValidStringWithSpaces = (value) => /^[a-zA-Z\s]*$/.test(value);
 
@@ -124,6 +138,7 @@ export default {
       eventId: null,
       editMode: false,
       editEventName: null,
+      eventInfo: {},
     };
   },
   beforeMount() {
@@ -135,6 +150,9 @@ export default {
     }
   },
   computed: {
+    eventDate() {
+      return moment(this.eventInfo.date).format("LLL");
+    },
     isFormValid() {
       return !this.$v.editEventName.$invalid;
     },
@@ -171,7 +189,11 @@ export default {
       };
       axios
         .post(
-          "virtual_events/user/virtual_event/" + this.eventId + "/update",
+          "organization/" +
+            this.$store.state.organizationId +
+            "/virtual_events/" +
+            this.eventId +
+            "/update",
           data
         )
         .then((res) => {
@@ -182,7 +204,13 @@ export default {
     },
     getVirtualEvent() {
       axios
-        .get("virtual_events/user/virtual_event/" + this.eventId, {})
+        .get(
+          "organization/" +
+            this.$store.state.organizationId +
+            "/virtual_events/" +
+            this.eventId,
+          {}
+        )
         .then((res) => {
           this.setEvent(res.data);
         })
@@ -193,6 +221,7 @@ export default {
       let eventInfo = data.event;
       this.eventName = eventInfo.name;
       this.eventId = eventInfo._id.$oid;
+      this.eventInfo = data.event;
     },
   },
 };

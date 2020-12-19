@@ -55,6 +55,7 @@ class User(db.DynamicDocument, HelperMixin):
     last_name = db.StringField()
     registered_date = db.DateTimeField()
     organizations = db.ListField(db.ReferenceField("Organization"))
+    default_organization = db.ReferenceField("Organization")
 
     def create_access_token(self):
         """Generate access token based on what's considered unique identifier"""
@@ -73,14 +74,29 @@ class User(db.DynamicDocument, HelperMixin):
             registered=datetime.datetime.utcnow(),
         )
         user.save()
+        user_organization = Organization(name=user.email)
+        user_organization.save()
+        user.default_organization = user_organization
+        user.organizations.append(user_organization)
+        user.save()
         return user
 
 
-class EventAttendee(db.DynamicDocument, HelperMixin):
+class Member(db.DynamicDocument, HelperMixin):
     first_name = db.StringField()
     last_name = db.StringField()
     phone_number = db.StringField()
     email = db.StringField(max_length=255)
+    organization = db.ReferenceField("Organization", required=True)
+    active = db.BooleanField(default=True)
+    archived = db.BooleanField(default=False)
+    archived_date = db.DateTimeField()
+
+    def mark_archived(self):
+        self.archived = True
+        self.active = False
+        self.archived_date = datetime.datetime.utcnow()
+        self.save()
 
 
 class Organization(db.DynamicDocument, HelperMixin):
@@ -99,27 +115,30 @@ class VirtualEvent(db.DynamicDocument, HelperMixin):
 
     name = db.StringField()
     date = db.DateTimeField()
+    organization = db.ReferenceField("Organization", required=True)
     original_timezone_name = db.StringField()
     estimated_duration_minutes = db.IntField()
-    attendees = db.ListField(db.ReferenceField("EventAttendee"))
+    attendees = db.ListField(db.ReferenceField("Member"))
     created_by = db.ReferenceField("User")
     created_date = db.DateTimeField()
     created_under_timezone = db.StringField()
     canceled = db.BooleanField(default=False)
     canceled_date = db.DateTimeField()
     canceled_by = db.ReferenceField("User")
+    alert_settings = db.ReferenceField("AlertSettings")
 
     @staticmethod
-    def get_all_user_events(user):
-        events = VirtualEvent.objects(
-            Q(canceled__ne=True)
-            & (Q(created_by=user) | Q(organization__in=user.organizations))
-        )
+    def get_organization_events(organization):
+        events = VirtualEvent.objects(canceled__ne=True, organization=organization)
         return events
 
     @staticmethod
     def create(**kwargs):
         event = VirtualEvent(**kwargs)
+        event.save()
+        settings = AlertSettings(virtual_event=event)
+        settings.save()
+        event.alert_settings = settings
         event.save()
         return event
 
@@ -134,5 +153,16 @@ class VirtualEvent(db.DynamicDocument, HelperMixin):
         self.save()
 
     def remove_attendee(self, attendee):
-        self.attendee.remove(attendee)
+        self.attendees.remove(attendee)
         self.save()
+
+
+class AlertSettings(db.DynamicDocument, HelperMixin):
+    """
+    This specifies the alert settings for a given safety plan
+    """
+
+    virtual_event = db.ReferenceField("VirtualEvent")
+    sms = db.BooleanField(default=True)
+    email = db.BooleanField(default=True)
+    prerecorded_voice = db.BooleanField(default=False)

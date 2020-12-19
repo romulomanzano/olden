@@ -235,7 +235,12 @@ export default {
     },
     getUserVirtualEvents() {
       axios
-        .get("virtual_events/user/virtual_events", {})
+        .get(
+          "organization/" +
+            this.$store.state.organizationId +
+            "/virtual_events",
+          {}
+        )
         .then((res) => {
           this.setVirtualEvents(res.data);
         })
@@ -262,7 +267,12 @@ export default {
       this.closeModal();
       //depending of the value either post new or update virtual event
       axios
-        .post("virtual_events/user/virtual_events/add", data)
+        .post(
+          "organization/" +
+            this.$store.state.organizationId +
+            "/virtual_events/add",
+          data
+        )
         .then((res) => {
           this.$message.success(res.data.message);
           this.$router.push(
@@ -288,7 +298,14 @@ export default {
       let planId = this.archiveVirtualEventId;
       this.closeDeregisterModal();
       axios
-        .post("virtual_events/user/virtual_event/" + planId + "/cancel", {})
+        .post(
+          "organization/" +
+            this.$store.state.organizationId +
+            "/virtual_event/" +
+            planId +
+            "/cancel",
+          {}
+        )
         .then((res) => {
           this.$message.success(res.data.message);
           this.getUserVirtualEvents();

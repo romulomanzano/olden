@@ -19,7 +19,6 @@ def login(name=None):
     # Getting jwt key
     r = requests.get(url=config.COTTER_JWKS_URL)
     data = r.json()
-    current_app.logger.info(data)
     public_key = data["keys"][0]
     # Getting access token and validate it
     token = req["oauth_token"]["access_token"]
@@ -39,6 +38,7 @@ def login(name=None):
                     "userId": str(user.id),
                     "expiresIn": config.JWT_ACCESS_TOKEN_EXPIRES,
                     "userEmail": user.email,
+                    "organizationId": str(user.default_organization.id),
                 }
             ),
             200,

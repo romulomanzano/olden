@@ -9,12 +9,14 @@ export default new Vuex.Store({
     userToken: null,
     userId: null,
     userEmail: null,
+    organizationId: null,
   },
   mutations: {
     authUser(state, userData) {
       state.userToken = userData.userToken;
       state.userId = userData.userId;
       state.userEmail = userData.userEmail;
+      state.organizationId = userData.organizationId;
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${userData.userToken}`;
@@ -23,7 +25,11 @@ export default new Vuex.Store({
       state.userToken = null;
       state.userId = null;
       state.userEmail = null;
+      state.organizationId = null;
       axios.defaults.headers.common["Authorization"] = null;
+    },
+    setOrganization(state, organizationId) {
+      state.organizationId = organizationId;
     },
   },
   actions: {
@@ -32,6 +38,7 @@ export default new Vuex.Store({
         userToken: authData.userToken,
         userId: authData.userId,
         userEmail: authData.userEmail,
+        organizationId: authData.organizationId,
       });
       dispatch("setLogoutTimer", authData.expiresIn);
       const now = new Date();
@@ -42,24 +49,13 @@ export default new Vuex.Store({
       localStorage.setItem("userId", authData.userId);
       localStorage.setItem("expirationDate", expirationDate);
       localStorage.setItem("userEmail", authData.userEmail);
+      localStorage.setItem("organizationId", authData.organizationId);
       router.replace("/dashboard");
     },
     setLogoutTimer({ commit }, expirationTime) {
       setTimeout(() => {
         commit("clearAuthData");
       }, expirationTime * 1000);
-    },
-    async signup({ dispatch }, data) {
-      try {
-        await dispatch("authenticateUser", {
-          userToken: data.userToken,
-          userId: data.userId,
-          expiresIn: data.expiresIn,
-          userEmail: data.userEmail,
-        });
-      } catch (error) {
-        Vue.$log.debug(error);
-      }
     },
     async login({ dispatch }, data) {
       try {
@@ -68,6 +64,7 @@ export default new Vuex.Store({
           userId: data.userId,
           expiresIn: data.expiresIn,
           userEmail: data.userEmail,
+          organizationId: data.organizationId,
         });
       } catch (error) {
         Vue.$log.debug(error);
@@ -86,10 +83,12 @@ export default new Vuex.Store({
       }
       const userId = localStorage.getItem("userId");
       const userEmail = localStorage.getItem("userEmail");
+      const organizationId = localStorage.getItem("organizationId");
       commit("authUser", {
         userToken: userToken,
         userId: userId,
         userEmail: userEmail,
+        organizationId: organizationId,
       });
       router.replace("/dashboard");
     },
@@ -99,6 +98,7 @@ export default new Vuex.Store({
       localStorage.removeItem("userId");
       localStorage.removeItem("userToken");
       localStorage.removeItem("userEmail");
+      localStorage.removeItem("organizationId");
       router.replace("/login");
     },
   },

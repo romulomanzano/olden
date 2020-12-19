@@ -17,7 +17,7 @@
         <sidebar-item
           :link="{
             name: 'User Profile',
-            icon: 'ni ni-single-02 text-blue',
+            icon: 'fa fa-user-cog text-blue',
             path: '/profile',
           }"
         />
@@ -26,6 +26,13 @@
             name: 'Virtual Events',
             icon: 'fa fa-life-ring text-primary',
             path: '/virtual_events',
+          }"
+        />
+        <sidebar-item
+          :link="{
+            name: 'Members',
+            icon: 'fa fa-user-plus text-purple',
+            path: '/members',
           }"
         />
         <template>
@@ -40,7 +47,7 @@
               "
             >
               <template>
-                <i class="fa fa-inbox text-purple"></i>
+                <i class="fa fa-inbox text-default"></i>
                 <span class="nav-link-text">Members Messages</span>
               </template>
             </router-link>
