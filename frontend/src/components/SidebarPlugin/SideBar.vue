@@ -9,7 +9,7 @@
         <span class="navbar-toggler-icon"></span>
       </navbar-toggle-button>
       <router-link class="navbar-brand" to="/">
-        <img :src="logo" class="navbar-brand-img" alt="..." />
+        <img :src="logo" class="navbar-brand-img" alt="olden" />
       </router-link>
 
       <slot name="mobile-right">
@@ -121,7 +121,7 @@ export default {
   props: {
     logo: {
       type: String,
-      default: "img/icons/large-192_x_192.png",
+      default: "img/icons/dash-logo-blue.png",
       description: "Olden logo",
     },
     autoClose: {

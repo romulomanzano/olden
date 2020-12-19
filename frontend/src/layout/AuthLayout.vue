@@ -7,7 +7,7 @@
       expand
     >
       <router-link slot="brand" class="navbar-brand" to="/">
-        <img src="img/brand/medium-olden-secondary.png" />
+        <img src="img/icons/180-180-white.png" />
       </router-link>
 
       <template v-slot="{ closeMenu }">
@@ -98,12 +98,7 @@
               class="nav nav-footer justify-content-center justify-content-xl-end"
             >
               <li class="nav-item">
-                <a
-                  href="https://medium.com/berkeleyischool/project-soundflux-aims-to-save-lives-with-sound-based-fall-detection-system-e4b52fd2aa4a"
-                  class="nav-link"
-                  target="_blank"
-                  >Blog</a
-                >
+                <a href="" class="nav-link" target="_blank">Blog</a>
               </li>
             </ul>
           </div>
