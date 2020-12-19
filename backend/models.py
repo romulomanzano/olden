@@ -9,7 +9,6 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 import datetime
 import constants
-from mongoengine.queryset.visitor import Q
 from flask_jwt_extended import create_access_token, JWTManager
 
 app = Flask(__name__)
@@ -139,7 +138,7 @@ class Organization(db.DynamicDocument, HelperMixin):
         return events.count()
 
     def get_active_member_count(self, now=None):
-        now = datetime.datetime.utcnow()
+        now = now or datetime.datetime.utcnow()
         members = Member.objects(active=True, organization=self)
         return members.count()
 

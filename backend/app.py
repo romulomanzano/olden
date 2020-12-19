@@ -12,6 +12,10 @@ app.register_blueprint(app_auth_blueprint, url_prefix="/auth")
 app.register_blueprint(app_organization_blueprint, url_prefix="/organization")
 app.register_blueprint(app_utils_blueprint, url_prefix="/utils")
 app.register_blueprint(app_profile_blueprint, url_prefix="/profile")
+from utils import get_generic_logger
+import mongoengine
+
+logger = get_generic_logger(__name__)
 
 
 @jwt.token_in_blacklist_loader

@@ -4,7 +4,6 @@ flask
 Flask-Cors
 Flask_Bcrypt
 Flask_JWT_Extended
-Flask-Security-Too
 flask_admin
 flask_jwt_extended
 flask_mongoengine

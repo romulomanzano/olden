@@ -1,7 +1,7 @@
 """"Module to house the emergency related endpoints"""
-import config as config
-from flask import Blueprint, request, current_app
-from models import VirtualEvent, User, Member, Organization
+import config
+from flask import Blueprint, request
+from models import VirtualEvent, Member, Organization
 from flask_jwt_extended import jwt_required
 from flask_cors import CORS
 from app_utils import get_user_for_token_identity
@@ -9,8 +9,6 @@ from utils import get_generic_logger
 from bson.json_util import dumps
 from bson import ObjectId
 import bson
-import mongoengine
-from mongoengine.queryset.visitor import Q
 from api_schemas.virtual_event_schemas import event_list_schema, event_input_schema
 import cerberus
 import datetime
@@ -165,9 +163,12 @@ def add_attendees_to_virtual_event(org_id, _id):
             member.save()
 
         if member in event.attendees:
-            dumps(
-                {"ok": False, "message": "Attendee is already part of this event"}
-            ), 400
+            return (
+                dumps(
+                    {"ok": False, "message": "Attendee is already part of this event"}
+                ),
+                400,
+            )
         event.add_attendee(member)
         return (
             dumps({"ok": True, "message": "Attendee added successfully"}),
@@ -213,7 +214,7 @@ def archive_member_from_organization(org_id, _id):
             return dumps({"ok": False, "message": "Invalid Member Id"}), 420
         member = Member.objects(id=ObjectId(_id), organization=org, active=True).first()
         if not member:
-            dumps({"ok": False, "message": "Active member not found"}), 400
+            return dumps({"ok": False, "message": "Active member not found"}), 400
         member.mark_archived()
         return (
             dumps({"ok": True, "message": "Member marked inactive"}),
@@ -265,7 +266,10 @@ def remove_attendees_from_virtual_event(org_id, _id):
             return dumps({"ok": False, "message": "Invalid Attendee Id"}), 420
         attendee = Member.objects(id=ObjectId(data["attendeeId"])).first()
         if attendee not in event.attendees:
-            dumps({"ok": False, "message": "Attendee is not part of this event"}), 400
+            return (
+                dumps({"ok": False, "message": "Attendee is not part of this event"}),
+                400,
+            )
         event.remove_attendee(attendee)
         return (
             dumps({"ok": True, "message": "Attendee removed successfully"}),

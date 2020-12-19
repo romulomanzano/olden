@@ -1,8 +1,7 @@
 """"Module to house the auth related endpoints"""
-import config as config
-import constants as constants
+import config
 from flask import Blueprint, request
-from models import Address, User
+from models import Address
 from flask_jwt_extended import jwt_required
 from flask_cors import CORS
 from .app_utils import get_user_for_token_identity

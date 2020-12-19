@@ -1,8 +1,5 @@
-import logging
-from models import app, User
-from flask_security import Security
-from flask import Blueprint, current_app, request
-from flask_login import user_logged_in
+from models import User
+from flask import Blueprint, request
 from jose import jwt
 import config
 import requests

@@ -16,7 +16,7 @@
           <div class="row">
             <div class="col-6 collapse-brand">
               <router-link to="/">
-                <img src="img/icons/large-192_x_192.png" />
+                <img src="img/icons/dash-logo-blue.png" />
               </router-link>
             </div>
             <div class="col-6 collapse-close">
@@ -44,7 +44,7 @@
       </template>
     </base-nav>
     <!-- Header -->
-    <div class="header bg-gradient-primary py-7 py-lg-8">
+    <div class="bg-gradient-primary py-7 py-lg-8">
       <div class="container">
         <div class="header-body text-center mb-7">
           <div class="row justify-content-center">

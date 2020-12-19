@@ -1,6 +1,6 @@
 """"Module to house the utils related endpoints"""
-import config as config
-import constants as constants
+import config
+import constants
 from flask import Blueprint
 from models import User
 from flask_jwt_extended import get_jwt_identity, jwt_required
