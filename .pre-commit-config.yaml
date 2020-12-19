@@ -8,8 +8,16 @@ repos:
       - id: detect-private-key
       - id: check-case-conflict
       - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-ast
+      - id: end-of-file-fixer
+      - id: debug-statements
   - repo: https://github.com/python/black
     rev: stable
     hooks:
       - id: black
         language_version: python3.7
+  - repo: https://github.com/prettier/prettier
+    rev: "2.0.4"
+    hooks:
+      - id: prettier

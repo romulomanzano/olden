@@ -2,7 +2,8 @@ argparse
 cerberus
 flask
 Flask-Cors
-Flask-Security-Too
+Flask_Bcrypt
+Flask_JWT_Extended
 flask_admin
 flask_jwt_extended
 flask_mongoengine
@@ -19,5 +20,6 @@ rq
 rq-scheduler
 sentry-sdk
 uszipcode
-workos
 trycourier
+python-jose
+pytz
