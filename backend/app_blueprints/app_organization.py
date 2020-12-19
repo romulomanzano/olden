@@ -160,6 +160,7 @@ def add_attendees_to_virtual_event(org_id, _id):
                 phone_number=data.get("userPhoneNumber"),
                 email=data.get("userEmail"),
                 organization=org,
+                active=True,
             )
             member.save()
 
@@ -190,6 +191,7 @@ def add_member_organization(org_id):
             phone_number=data.get("userPhoneNumber"),
             email=data.get("userEmail"),
             organization=org,
+            active=True,
         )
         member.save()
         return (
@@ -323,6 +325,29 @@ def update_alert_settings(org_id, _id):
                     "ok": True,
                     "message": "Alert settings successfully updated",
                     "alert_settings": event.alert_settings.to_mongo().to_dict(),
+                }
+            ),
+            200,
+        )
+    return dumps({"ok": False, "message": "Invalid user"}), 400
+
+
+@app_organization_blueprint.route("/<org_id>/account_summary", methods=["GET"])
+@jwt_required
+def organization_account_summary(org_id):
+    user = get_user_for_token_identity()
+    if user:
+        org = get_organization_if_user_is_admin(org_id, user)
+        if not org:
+            return dumps({"ok": False, "message": "Invalid organization"}), 400
+        account_summary = org.account_summary()
+        return (
+            dumps(
+                {
+                    "ok": True,
+                    "upcoming_events": account_summary.get("upcoming_events"),
+                    "past_events": account_summary.get("past_events"),
+                    "active_members": account_summary.get("active_members"),
                 }
             ),
             200,

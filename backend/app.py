@@ -4,10 +4,14 @@ Flask API exposing the core endpoints needed to interact with the external API c
 from models import BlacklistedToken, jwt, app
 from app_blueprints.app_auth import app_auth_blueprint
 from app_blueprints.app_organization import app_organization_blueprint
+from app_blueprints.app_utils import app_utils_blueprint
+from app_blueprints.app_profile import app_profile_blueprint
 
 # register blueprints
 app.register_blueprint(app_auth_blueprint, url_prefix="/auth")
 app.register_blueprint(app_organization_blueprint, url_prefix="/organization")
+app.register_blueprint(app_utils_blueprint, url_prefix="/utils")
+app.register_blueprint(app_profile_blueprint, url_prefix="/profile")
 
 
 @jwt.token_in_blacklist_loader

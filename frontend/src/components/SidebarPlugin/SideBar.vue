@@ -54,15 +54,55 @@
         <ul class="navbar-nav">
           <slot name="links"> </slot>
         </ul>
+        <!--coming soon-->
+        <hr class="my-3" />
+        <!--Heading-->
+        <h6 class="navbar-heading text-muted">Comming Soon</h6>
+        <!--Navigation-->
+        <ul class="navbar-nav mb-md-3">
+          <li>
+            <div
+              class="nav-link"
+              @click="comingSoonMessage('This feature is not yet available.')"
+            >
+              <template class="nav-link">
+                <i class="fa fa-inbox text-default"></i>
+                <span class="nav-link-text">Members Messages</span>
+              </template>
+            </div>
+          </li>
+          <li class="nav-item">
+            <div
+              class="nav-link"
+              @click="comingSoonMessage('This feature is not yet available.')"
+            >
+              <template>
+                <i class="fa fa-envelope text-gray"></i>
+                <span class="nav-link-text">Mail-in Orders</span>
+              </template>
+            </div>
+          </li>
+          <li class="nav-item">
+            <div
+              class="nav-link"
+              @click="comingSoonMessage('This feature is not yet available.')"
+            >
+              <template>
+                <i class="fa fa-users text-grey-dark"></i>
+                <span class="nav-link-text">Team Management</span>
+              </template>
+            </div>
+          </li>
+        </ul>
         <!--Divider-->
         <hr class="my-3" />
         <!--Heading-->
-        <h6 class="navbar-heading text-muted">Documentation</h6>
+        <h6 class="navbar-heading text-muted">Support</h6>
         <!--Navigation-->
         <ul class="navbar-nav mb-md-3">
           <li class="nav-item">
             <a class="nav-link" href="">
-              <i class="ni ni-spaceship"></i> API Integration
+              <i class="fa fa-question-circle"></i> Contact Support
             </a>
           </li>
         </ul>
@@ -97,6 +137,9 @@ export default {
     };
   },
   methods: {
+    comingSoonMessage(featureName) {
+      this.$message.info(featureName);
+    },
     closeSidebar() {
       this.$sidebar.displaySidebar(false);
     },

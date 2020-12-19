@@ -8,6 +8,7 @@ import utils
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 import datetime
+import constants
 from mongoengine.queryset.visitor import Q
 from flask_jwt_extended import create_access_token, JWTManager
 
@@ -56,6 +57,8 @@ class User(db.DynamicDocument, HelperMixin):
     registered_date = db.DateTimeField()
     organizations = db.ListField(db.ReferenceField("Organization"))
     default_organization = db.ReferenceField("Organization")
+    address = db.ReferenceField("Address")
+    phone_number = db.StringField()
 
     def create_access_token(self):
         """Generate access token based on what's considered unique identifier"""
@@ -81,6 +84,25 @@ class User(db.DynamicDocument, HelperMixin):
         user.save()
         return user
 
+    def set_personal_details_from_web_data(self, data):
+        self.first_name = data.get("firstName")
+        self.last_name = data.get("lastName")
+        self.save()
+        if self.phone_number != data.get("phoneNumber"):
+            self.phone_number = data.get("phoneNumber")
+            self.save()
+
+    def get_personal_details_dict(self):
+        personal_details = {}
+        personal_details["first_name"] = self.first_name
+        personal_details["last_name"] = self.last_name
+        personal_details["phone_number"] = self.phone_number
+        return personal_details
+
+    @property
+    def _contact_profile(self):
+        return {"phone_number": self.phone_number, "email": self.email}
+
 
 class Member(db.DynamicDocument, HelperMixin):
     first_name = db.StringField()
@@ -101,6 +123,32 @@ class Member(db.DynamicDocument, HelperMixin):
 
 class Organization(db.DynamicDocument, HelperMixin):
     name = db.StringField()
+
+    def get_upcoming_event_count(self, now=None):
+        now = datetime.datetime.utcnow()
+        events = VirtualEvent.objects(
+            canceled__ne=True, organization=self, date__gte=now
+        )
+        return events.count()
+
+    def get_past_event_count(self, now=None):
+        now = datetime.datetime.utcnow()
+        events = VirtualEvent.objects(
+            canceled__ne=True, organization=self, date__lt=now
+        )
+        return events.count()
+
+    def get_active_member_count(self, now=None):
+        now = datetime.datetime.utcnow()
+        members = Member.objects(active=True, organization=self)
+        return members.count()
+
+    def account_summary(self):
+        return {
+            "upcoming_events": self.get_upcoming_event_count(),
+            "past_events": self.get_past_event_count(),
+            "active_members": self.get_active_member_count(),
+        }
 
 
 class VirtualEvent(db.DynamicDocument, HelperMixin):
@@ -166,3 +214,39 @@ class AlertSettings(db.DynamicDocument, HelperMixin):
     sms = db.BooleanField(default=True)
     email = db.BooleanField(default=True)
     prerecorded_voice = db.BooleanField(default=False)
+
+
+class Address(db.DynamicDocument, HelperMixin):
+    """Generic address container"""
+
+    date_updated = db.DateTimeField()
+    address_line_1 = db.StringField()
+    city = db.StringField()
+    zipcode = db.StringField()
+    state = db.StringField()
+    land_line_number = db.StringField()
+    country = db.StringField(default=constants.ADDRESS_UNITED_STATES)
+    user = db.ReferenceField("User")
+
+    def update_address_from_web_data(self, data, now=None):
+        now = now or datetime.datetime.utcnow()
+        self.address_line_1 = data.get("addressLine1")
+        self.zipcode = data.get("zipCode")
+        self.city = data.get("city")
+        self.state = data.get("state")
+        self.date_updated = now
+        self.land_line_number = data.get("landLineNumber")
+        self.save()
+
+    @staticmethod
+    def create_address_from_web_data(data, now=None):
+        now = now or datetime.datetime.utcnow()
+        address = Address()
+        address.address_line_1 = data.get("addressLine1")
+        address.zipcode = data.get("zipCode")
+        address.city = data.get("city")
+        address.state = data.get("state")
+        address.date_updated = now
+        address.land_line_number = data.get("landLineNumber")
+        address.save()
+        return address

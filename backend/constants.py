@@ -1,3 +1,4 @@
+ADDRESS_UNITED_STATES = "United States"
 US_STATES = [
     "AL",
     "AK",

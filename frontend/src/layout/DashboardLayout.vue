@@ -35,57 +35,6 @@
             path: '/members',
           }"
         />
-        <template>
-          <li class="nav-item">
-            <router-link
-              to=""
-              class="nav-link"
-              target=""
-              href=""
-              @click.native="
-                comingSoonMessage('This feature is not yet available.')
-              "
-            >
-              <template>
-                <i class="fa fa-inbox text-default"></i>
-                <span class="nav-link-text">Members Messages</span>
-              </template>
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link
-              to=""
-              class="nav-link"
-              target=""
-              href=""
-              @click.native="
-                comingSoonMessage('This feature is not yet available.')
-              "
-            >
-              <template>
-                <i class="fa fa-envelope text-gray"></i>
-                <span class="nav-link-text">Mail-in Orders</span>
-              </template>
-            </router-link>
-          </li>
-
-          <li class="nav-item">
-            <router-link
-              to=""
-              class="nav-link"
-              target=""
-              href=""
-              @click.native="
-                comingSoonMessage('This feature is not yet available.')
-              "
-            >
-              <template>
-                <i class="fa fa-users text-grey-dark"></i>
-                <span class="nav-link-text">Team Management</span>
-              </template>
-            </router-link>
-          </li>
-        </template>
       </template>
     </side-bar>
     <div class="main-content" :data="sidebarBackground">
@@ -124,9 +73,6 @@ export default {
       if (this.$sidebar.showSidebar) {
         this.$sidebar.displaySidebar(false);
       }
-    },
-    comingSoonMessage(featureName) {
-      this.$message.info(featureName);
     },
   },
 };

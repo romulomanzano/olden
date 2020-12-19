@@ -5,30 +5,30 @@
       <div class="row">
         <div class="col-xl-4 col-lg-6">
           <stats-card
-            title="Total Events detected"
+            title="Upcoming Events"
             type="gradient-primary"
-            v-bind:sub-title="eventsDetected | formatNumber"
-            icon="ni ni-sound-wave"
+            v-bind:sub-title="upcomingEvents | formatNumber"
+            icon="fa fa-calendar"
             class="mb-4 mb-xl-0"
           >
           </stats-card>
         </div>
         <div class="col-xl-4 col-lg-6">
           <stats-card
-            title="Number of Active Devices"
-            type="gradient-default"
-            :sub-title="activeDevices | formatNumber"
-            icon="ni ni-laptop"
+            title="Active Members"
+            type="gradient-purple"
+            :sub-title="activeMembers | formatNumber"
+            icon="fa fa-address-card"
             class="mb-4 mb-xl-0"
           >
           </stats-card>
         </div>
         <div class="col-xl-4 col-lg-6">
           <stats-card
-            title="Emergency Readiness"
+            title="Past Events"
             type="gradient-danger"
-            :sub-title="emergencyReadiness | formatPercentage"
-            icon="ni ni-ambulance"
+            :sub-title="pastEvents | formatNumber"
+            icon="fa fa-calendar-check"
             class="mb-4 mb-xl-0"
           >
           </stats-card>
@@ -43,59 +43,33 @@ import axios from "../axios-auth";
 export default {
   data() {
     return {
-      eventsDetected: 0,
-      activeDevices: 0,
-      emergencyReadiness: 0,
+      upcomingEvents: 0,
+      activeMembers: 0,
+      pastEvents: 0,
     };
   },
   methods: {
     getAccountSummary() {
       axios
-        .get("profile/user/account_summary", {})
+        .get(
+          "organization/" +
+            this.$store.state.organizationId +
+            "/account_summary",
+          {}
+        )
         .then((res) => {
           this.setSummary(res.data);
         })
         .catch((error) => this.$message.error(error.response.data.message));
     },
     setSummary(data) {
-      this.eventsDetected = data.events_detected;
-      this.activeDevices = data.active_device_count;
-      this.emergencyReadiness = data.readiness_score;
-    },
-    verifyNumber(token) {
-      axios
-        .post("profile/user/phone_number/verify/" + token, {})
-        .then((res) => {
-          this.$message.success(res.data);
-        })
-        .catch((error) => this.$message.error(error.response.data.message));
-    },
-    verifyPlanContact(verifyPlanId, verifyContactId) {
-      axios
-        .post(
-          "safety/verify_contact/" + verifyPlanId + "/" + verifyContactId,
-          {}
-        )
-        .then((res) => {
-          this.$message.success(res.data);
-        })
-        .catch((error) => this.$message.error(error.response.data.message));
+      this.upcomingEvents = data.upcoming_events;
+      this.activeMembers = data.active_members;
+      this.pastEvents = data.past_events;
     },
   },
   mounted() {
     this.getAccountSummary();
-    if (this.$route.query.verifyNumber) {
-      this.verifyNumber(this.$route.query.verifyNumber);
-    }
-    if (this.$route.query.verifyPlanId && this.$route.query.verifyContactId) {
-      this.verifyPlanContact(
-        this.$route.query.verifyPlanId,
-        this.$route.query.verifyContactId
-      );
-    }
-    if (this.$route.query.resetPassword) {
-      this.$message.error("Please logout before resetting your password.");
-    }
   },
 };
 </script>
