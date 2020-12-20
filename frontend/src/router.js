@@ -2,6 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import DashboardLayout from "@/layout/DashboardLayout";
 import AuthLayout from "@/layout/AuthLayout";
+import MeetLayout from "@/layout/MeetLayout";
 import store from "./store";
 
 Vue.use(Router);
@@ -86,6 +87,19 @@ export default new Router({
           name: "login",
           component: () =>
             import(/* webpackChunkName: "demo" */ "./views/Login.vue"),
+        },
+      ],
+    },
+    {
+      path: "/",
+      redirect: "login",
+      component: MeetLayout,
+      children: [
+        {
+          path: "/meet",
+          name: "meet",
+          component: () =>
+            import(/* webpackChunkName: "demo" */ "./views/Meet.vue"),
         },
       ],
     },

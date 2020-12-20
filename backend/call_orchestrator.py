@@ -5,6 +5,7 @@ from utils import logged
 import cerberus
 from api_schemas.meeting_details_schema import meeting_response_schema
 from api_schemas.schema_utils import datetime_to_unix
+import secrets
 
 
 @logged
@@ -23,7 +24,11 @@ class CallOrchestrator:
         eject_at_room_exp=True,
         max_participants=20,
         lang=config.MEETING_DEFAULT_LANGUAGE,
+        name=None,
     ):
+        name = name or "{}-{}".format(
+            config.MEETING_ROOM_DEFAULT_PREFIX, secrets.token_hex(3)
+        )
         expire_after_minutes = (
             duration_estimate_minutes or 60
         ) + 10  # add a buffer of 10 minutes
@@ -37,6 +42,7 @@ class CallOrchestrator:
         expire_after_elapsed = (expire_after_minutes + early_join_buffer_minutes) * 60
         # see https://docs.daily.co/reference#room-configuration
         data = {
+            "name": name,
             "properties": {
                 "nbf": not_before,  # not before
                 "max_participants": max_participants,
@@ -44,7 +50,7 @@ class CallOrchestrator:
                 "eject_after_elapsed": expire_after_elapsed,  # may be redundant
                 "eject_at_room_exp": eject_at_room_exp,
                 "lang": lang,
-            }
+            },
         }
         url = "{}/v1/rooms".format(self.base_url)
         response = requests.post(

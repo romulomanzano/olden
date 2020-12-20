@@ -45,3 +45,4 @@ DAILY_API_KEY = os.getenv("DAILY_API_KEY")
 MEETING_DEFAULT_LANGUAGE = (
     "en"  # see https://docs.daily.co/reference#room-configuration
 )
+MEETING_ROOM_DEFAULT_PREFIX = "olden"
