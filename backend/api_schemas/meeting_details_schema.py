@@ -1,12 +1,18 @@
-from .schema_utils import coerce_unix_timestamp_into_datetime, coerce_into_datetime
+from .schema_utils import (
+    coerce_unix_timestamp_into_datetime,
+    coerce_date_with_seconds_into_datetime,
+)
 
 meeting_response_schema = {
-    "id": {"type": "string"},
+    "_id": {"type": "string"},
     "name": {"type": "string", "nullable": True},
     "api_created": {"type": "boolean", "nullable": True},
     "privacy": {"type": "string", "nullable": True},
     "url": {"type": "string"},
-    "created_at": {"type": "datetime", "coerce": coerce_into_datetime},
+    "created_at": {
+        "type": "datetime",
+        "coerce": coerce_date_with_seconds_into_datetime,
+    },
     "config": {
         "type": "dict",
         "schema": {

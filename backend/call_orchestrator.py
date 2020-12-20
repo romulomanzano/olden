@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 from utils import logged
 import cerberus
 from api_schemas.meeting_details_schema import meeting_response_schema
+from api_schemas.schema_utils import datetime_to_unix
 
 
 @logged
@@ -27,26 +28,31 @@ class CallOrchestrator:
             duration_estimate_minutes or 60
         ) + 10  # add a buffer of 10 minutes
         early_join_buffer_minutes = 5
-        not_before = (
+        not_before = datetime_to_unix(
             start_datetime - relativedelta(minutes=early_join_buffer_minutes)
-        ).total_seconds()  # 5 mins before
-        expire_at = (
+        )  # 5 mins before
+        expire_at = datetime_to_unix(
             start_datetime + relativedelta(minutes=expire_after_minutes)
-        ).total_seconds()
+        )
         expire_after_elapsed = (expire_after_minutes + early_join_buffer_minutes) * 60
         # see https://docs.daily.co/reference#room-configuration
         data = {
-            "nbf": not_before,  # not before
-            "max_participants": max_participants,
-            "exp": expire_at,
-            "eject_after_elapsed": expire_after_elapsed,  # may be redundant
-            "eject_at_room_exp": eject_at_room_exp,
-            "lang": lang,
+            "properties": {
+                "nbf": not_before,  # not before
+                "max_participants": max_participants,
+                "exp": expire_at,
+                "eject_after_elapsed": expire_after_elapsed,  # may be redundant
+                "eject_at_room_exp": eject_at_room_exp,
+                "lang": lang,
+            }
         }
         url = "{}/v1/rooms".format(self.base_url)
-        response = requests.request("POST", url, headers=self.headers, data=data)
-        self.logger.info(response.text)
-        self.logger.info(response.json())
+        response = requests.post(
+            url,
+            json=data,
+            headers=self.headers,
+        )
+
         # save response
         rjson = response.json()
         meeting_details = {

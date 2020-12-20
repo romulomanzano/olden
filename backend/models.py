@@ -123,7 +123,7 @@ class Member(db.DynamicDocument, HelperMixin):
 
 class Organization(db.DynamicDocument, HelperMixin):
     name = db.StringField()
-    max_participants_per_meeting = db.IntegerField(default=20)
+    max_participants_per_meeting = db.IntField(default=20)
 
     def get_upcoming_event_count(self, now=None):
         now = datetime.datetime.utcnow()
@@ -154,12 +154,14 @@ class Organization(db.DynamicDocument, HelperMixin):
 
 @utils.logged
 class MeetingConfig(db.EmbeddedDocument):
-    start_audio_off = db.BooleanField(default=False)
+    start_audio_off = db.BooleanField(
+        default=False,
+    )
     start_video_off = db.BooleanField(default=False)
     exp = db.DateTimeField()
     nbf = db.DateTimeField()
-    max_participants = db.IntegerField()
-    eject_after_elapsed = db.IntegerField()
+    max_participants = db.IntField()
+    eject_after_elapsed = db.IntField()
     eject_at_room_exp = db.BooleanField()
     lang = db.StringField()
 
@@ -176,6 +178,7 @@ class MeetingDetails(db.EmbeddedDocument):
     config = db.EmbeddedDocumentField(MeetingConfig)
 
 
+@utils.logged
 class VirtualEvent(db.DynamicDocument, HelperMixin):
     """
     This specifies a safety plan which is a relationship between
@@ -209,7 +212,8 @@ class VirtualEvent(db.DynamicDocument, HelperMixin):
             eject_at_room_exp=True,
             max_participants=self.organization.max_participants_per_meeting,
         )
-        self.meeting_details = details
+        meeting_details = MeetingDetails(**details)
+        self.meeting_details = meeting_details
         self.save()
 
     @staticmethod

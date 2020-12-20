@@ -1,4 +1,4 @@
-from .schema_utils import coerce_unix_timestamp_into_datetime
+from .schema_utils import coerce_date_to_string, coerce_into_datetime
 
 oid_schema = {"$oid": {"type": "string"}}
 
@@ -24,6 +24,6 @@ event_list_schema = {
 
 
 event_input_schema = {
-    "name": {"type": "string"},
-    "date": {"type": "datetime", "coerce": coerce_into_datetime},
+    "eventName": {"type": "string"},
+    "eventDatetime": {"type": "datetime", "coerce": coerce_into_datetime},
 }
