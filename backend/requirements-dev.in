@@ -1,3 +1,4 @@
 black
 pre-commit
 pip-tools
+importlib-metadata==3.3.0

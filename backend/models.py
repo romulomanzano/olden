@@ -10,6 +10,7 @@ from flask_cors import CORS
 import datetime
 import constants
 from flask_jwt_extended import create_access_token, JWTManager
+from call_orchestrator import CallOrchestrator
 
 app = Flask(__name__)
 app.logger.setLevel(logging.DEBUG)
@@ -122,6 +123,7 @@ class Member(db.DynamicDocument, HelperMixin):
 
 class Organization(db.DynamicDocument, HelperMixin):
     name = db.StringField()
+    max_participants_per_meeting = db.IntField(default=20)
 
     def get_upcoming_event_count(self, now=None):
         now = datetime.datetime.utcnow()
@@ -150,6 +152,33 @@ class Organization(db.DynamicDocument, HelperMixin):
         }
 
 
+@utils.logged
+class MeetingConfig(db.EmbeddedDocument):
+    start_audio_off = db.BooleanField(
+        default=False,
+    )
+    start_video_off = db.BooleanField(default=False)
+    exp = db.DateTimeField()
+    nbf = db.DateTimeField()
+    max_participants = db.IntField()
+    eject_after_elapsed = db.IntField()
+    eject_at_room_exp = db.BooleanField()
+    lang = db.StringField()
+
+
+@utils.logged
+class MeetingDetails(db.EmbeddedDocument):
+
+    _id = db.StringField()
+    name = db.StringField()
+    api_created = db.BooleanField()
+    privacy = db.StringField()
+    url = db.StringField()
+    created_at = db.DateTimeField()
+    config = db.EmbeddedDocumentField(MeetingConfig)
+
+
+@utils.logged
 class VirtualEvent(db.DynamicDocument, HelperMixin):
     """
     This specifies a safety plan which is a relationship between
@@ -173,6 +202,19 @@ class VirtualEvent(db.DynamicDocument, HelperMixin):
     canceled_date = db.DateTimeField()
     canceled_by = db.ReferenceField("User")
     alert_settings = db.ReferenceField("AlertSettings")
+    meeting_details = db.EmbeddedDocumentField(MeetingDetails)
+
+    def create_meeting_event(self):
+        orch = CallOrchestrator()
+        details = orch.create_room(
+            start_datetime=self.date,
+            duration_estimate_minutes=self.estimated_duration_minutes,
+            eject_at_room_exp=True,
+            max_participants=self.organization.max_participants_per_meeting,
+        )
+        meeting_details = MeetingDetails(**details)
+        self.meeting_details = meeting_details
+        self.save()
 
     @staticmethod
     def get_organization_events(organization):
@@ -187,6 +229,7 @@ class VirtualEvent(db.DynamicDocument, HelperMixin):
         settings.save()
         event.alert_settings = settings
         event.save()
+        event.create_meeting_event()
         return event
 
     def cancel(self, user):

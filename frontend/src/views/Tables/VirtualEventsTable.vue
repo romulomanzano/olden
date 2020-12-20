@@ -85,14 +85,14 @@
           <th>Event Name</th>
           <th>Date</th>
           <th>Created</th>
-          <th>Duration (Minutes)</th>
+          <th>Meeting Link</th>
           <th></th>
         </template>
 
         <template slot-scope="{ row }">
-          <th scope="row">
+          <td scope="row">
             {{ row.name | capitalize }}
-          </th>
+          </td>
           <td class="budget" v-if="row.date">
             {{ toMomentLocale(row.date) }}
           </td>
@@ -106,9 +106,19 @@
           <td v-else>
             N/A
           </td>
-          <th scope="row">
-            {{ row.estimated_duration_minutes }}
-          </th>
+          <td scope="row" v-if="row.meeting_details">
+            <base-button
+              size="sm"
+              type="default"
+              outline
+              icon="fa fa-copy"
+              @click="doCopy(row.meeting_details.url)"
+            ></base-button>
+            {{ (row.meeting_details || {}).url }}
+          </td>
+          <td v-else>
+            -
+          </td>
           <td class="text-right">
             <base-button
               type="primary"
@@ -124,7 +134,7 @@
               size="sm"
               icon="fa fa-trash"
               @click="archiveMode(row._id.$oid)"
-              >Archive</base-button
+              >Cancel</base-button
             >
           </td>
         </template>
@@ -281,6 +291,10 @@ export default {
         })
         .catch((error) => this.$message.error(error.response.data.message));
     },
+    doCopy(text) {
+      this.$copyText(text);
+      this.$message.success("Meeting URL Copied to Clipboard");
+    },
     archiveMode(eventId) {
       this.archiveVirtualEventId = eventId;
       this.archiveVirtualEventMode = true;
@@ -301,7 +315,7 @@ export default {
         .post(
           "organization/" +
             this.$store.state.organizationId +
-            "/virtual_event/" +
+            "/virtual_events/" +
             planId +
             "/cancel",
           {}

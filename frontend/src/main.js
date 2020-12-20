@@ -10,6 +10,7 @@ import VueLogger from "vuejs-logger";
 import VueMoment from "vue-moment";
 import numeral from "numeral";
 import VueConstants from "vue-constants";
+import VueClipboard from "vue-clipboard2";
 
 Vue.config.productionTip = false;
 const isProduction = process.env.NODE_ENV === "production";
@@ -30,6 +31,7 @@ Vue.use(Vuelidate);
 Vue.use(VueLogger, options);
 Vue.use(VueMoment);
 Vue.use(VueConstants);
+Vue.use(VueClipboard);
 
 //Add some filters
 Vue.filter("capitalize", function (value) {

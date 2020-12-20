@@ -302,6 +302,30 @@ def get_event_alert_settings(org_id, _id):
 
 
 @app_organization_blueprint.route(
+    "/<org_id>/virtual_events/<_id>/cancel", methods=["POST"]
+)
+@jwt_required
+def cancel_event(org_id, _id):
+    user = get_user_for_token_identity()
+    if user:
+        org = get_organization_if_user_is_admin(org_id, user)
+        if not org:
+            return dumps({"ok": False, "message": "Invalid organization"}), 400
+        if not bson.objectid.ObjectId.is_valid(_id):
+            return dumps({"ok": False, "message": "Invalid Event Id"}), 420
+        event = VirtualEvent.objects(id=ObjectId(_id), organization=org).first()
+        if not event:
+            logger.error("Can't retrieve event id {}".format(_id))
+            return (
+                dumps({"ok": False, "message": "No event found with that id"}),
+                420,
+            )
+        event.cancel(user)
+        return (dumps({"ok": True, "message": "Event Successfully Canceled"}), 200)
+    return dumps({"ok": False, "message": "Invalid user"}), 400
+
+
+@app_organization_blueprint.route(
     "/<org_id>/virtual_events/<_id>/alert_settings/update", methods=["POST"]
 )
 @jwt_required

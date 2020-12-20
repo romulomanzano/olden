@@ -11,7 +11,7 @@ click==7.1.2              # via black, pip-tools
 distlib==0.3.1            # via virtualenv
 filelock==3.0.12          # via virtualenv
 identify==1.5.10          # via pre-commit
-importlib-metadata==3.2.0  # via pre-commit, virtualenv
+importlib-metadata==3.3.0  # via -r requirements-dev.in, pre-commit, virtualenv
 mypy-extensions==0.4.3    # via black
 nodeenv==1.5.0            # via pre-commit
 pathspec==0.8.1           # via black
