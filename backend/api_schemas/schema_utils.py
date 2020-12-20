@@ -7,3 +7,7 @@ def coerce_date_to_string(_date):
 
 def coerce_into_datetime(datetime_string):
     return datetime.strptime(datetime_string, "YYYY-MM-DDTHH:mm[Z]")
+
+
+def coerce_unix_timestamp_into_datetime(timestamp):
+    return datetime.datetime.utcfromtimestamp(timestamp)

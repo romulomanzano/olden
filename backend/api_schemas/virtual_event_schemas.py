@@ -1,4 +1,4 @@
-from .schema_utils import coerce_date_to_string, coerce_into_datetime
+from .schema_utils import coerce_unix_timestamp_into_datetime
 
 oid_schema = {"$oid": {"type": "string"}}
 
