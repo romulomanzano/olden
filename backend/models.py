@@ -120,6 +120,10 @@ class Member(db.DynamicDocument, HelperMixin):
         self.archived_date = datetime.datetime.utcnow()
         self.save()
 
+    @property
+    def contact_profile(self):
+        return {"phone_number": self.phone_number, "email": self.email}
+
 
 class Organization(db.DynamicDocument, HelperMixin):
     name = db.StringField()
