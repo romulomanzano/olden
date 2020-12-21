@@ -26,7 +26,7 @@ class CallOrchestrator:
         lang=config.MEETING_DEFAULT_LANGUAGE,
         name=None,
     ):
-        name = name or "{}-{}".format(
+        name = name or "{}{}".format(
             config.MEETING_ROOM_DEFAULT_PREFIX, secrets.token_hex(3)
         )
         expire_after_minutes = (
