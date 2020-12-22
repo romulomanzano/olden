@@ -10,6 +10,10 @@
       </navbar-toggle-button>
       <router-link class="navbar-brand" to="/">
         <img :src="logo" class="navbar-brand-img" alt="olden" />
+
+        <h6 class="heading-small text-muted" v-if="orgName">
+          {{ orgName }}
+        </h6>
       </router-link>
 
       <slot name="mobile-right">
@@ -129,6 +133,12 @@ export default {
       default: true,
       description:
         "Whether sidebar should autoclose on mobile when clicking an item",
+    },
+  },
+
+  computed: {
+    orgName() {
+      return this.$store.state.organizationName;
     },
   },
   provide() {

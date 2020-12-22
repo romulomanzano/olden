@@ -18,13 +18,13 @@ export default {
   mounted() {
     // 1) Make a Config for adding Styles
     var config = {
-      ApiKeyID: "7b2b5c20-0fa9-417e-9a89-284ebe126135",
+      ApiKeyID: "464cc449-96da-497a-ab79-07c6452fbc48",
       Styles: {
         input_label: {
           fontFamily: "Roboto",
-          fontSize: 14,
+          fontSize: 16,
           width: 200,
-          color: "#adb5bd",
+          color: "#102542",
           fontWeight: 600,
         },
         input_text_container_default: {
@@ -44,6 +44,7 @@ export default {
           height: 30,
           fontWeight: 600,
           fontSize: 14,
+          backgroundColor: "#3d5afe",
         },
       },
 

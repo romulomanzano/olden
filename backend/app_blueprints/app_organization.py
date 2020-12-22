@@ -9,7 +9,11 @@ from utils import get_generic_logger
 from bson.json_util import dumps
 from bson import ObjectId
 import bson
-from api_schemas.virtual_event_schemas import event_list_schema, event_input_schema
+from api_schemas.virtual_event_schemas import (
+    event_list_schema,
+    event_input_schema,
+    event_base_schema,
+)
 import cerberus
 import datetime
 
@@ -36,7 +40,8 @@ def get_user_virtual_events(org_id):
         if not org:
             return dumps({"ok": False, "message": "Invalid organization"}), 400
         # specific mongo query
-        events = VirtualEvent.get_organization_events(org)
+        data = request.args
+        events = VirtualEvent.get_organization_events(org, event_type=data.get("type"))
         normalizer = cerberus.Validator(event_list_schema, purge_unknown=True)
         event_list = normalizer.normalized(
             {"events": [x.to_mongo().to_dict() for x in events]}
@@ -125,7 +130,9 @@ def get_virtual_event(org_id, _id):
                 dumps({"ok": False, "message": "No event found with that id"}),
                 420,
             )
-        return dumps({"ok": True, "event": event.to_mongo().to_dict()}), 200
+        normalizer = cerberus.Validator(event_base_schema, purge_unknown=True)
+        parsed_event = normalizer.normalized(event.to_mongo().to_dict())
+        return dumps({"ok": True, "event": parsed_event}), 200
     return dumps({"ok": False, "message": "Invalid user"}), 400
 
 
@@ -376,6 +383,35 @@ def organization_account_summary(org_id):
                     "upcoming_events": account_summary.get("upcoming_events"),
                     "past_events": account_summary.get("past_events"),
                     "active_members": account_summary.get("active_members"),
+                    "instantMeetingLink": account_summary.get("instantMeetingLink"),
+                }
+            ),
+            200,
+        )
+    return dumps({"ok": False, "message": "Invalid user"}), 400
+
+
+@app_organization_blueprint.route("/<org_id>/name/update", methods=["POST"])
+@jwt_required
+def update_organization_name(org_id):
+    user = get_user_for_token_identity()
+    if user:
+        org = get_organization_if_user_is_admin(org_id, user)
+        if not org:
+            return dumps({"ok": False, "message": "Invalid organization"}), 400
+        data = request.json
+        org.name = data.get("name")
+        org.save()
+        details = {
+            "organizationId": str(org.id),
+            "organizationName": org.name,
+        }
+        return (
+            dumps(
+                {
+                    "ok": True,
+                    "organization_details": details,
+                    "message": "Organization name updated",
                 }
             ),
             200,

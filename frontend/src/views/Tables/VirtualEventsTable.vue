@@ -249,7 +249,7 @@ export default {
           "organization/" +
             this.$store.state.organizationId +
             "/virtual_events",
-          {}
+          { params: { type: this.type } }
         )
         .then((res) => {
           this.setVirtualEvents(res.data);

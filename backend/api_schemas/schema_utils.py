@@ -5,6 +5,10 @@ def coerce_date_to_string(_date):
     return _date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
+def coerce_event_date_into_datetime(datetime_string):
+    return datetime.datetime.strptime(datetime_string, "%Y-%m-%dT%H:%MZ")
+
+
 def coerce_into_datetime(datetime_string):
     return datetime.datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M%fZ")
 

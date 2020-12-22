@@ -41,6 +41,32 @@ class HelperMixin:
     pass
 
 
+@utils.logged
+class MeetingConfig(db.EmbeddedDocument):
+    start_audio_off = db.BooleanField(
+        default=False,
+    )
+    start_video_off = db.BooleanField(default=False)
+    exp = db.DateTimeField()
+    nbf = db.DateTimeField()
+    max_participants = db.IntField()
+    eject_after_elapsed = db.IntField()
+    eject_at_room_exp = db.BooleanField()
+    lang = db.StringField()
+
+
+@utils.logged
+class MeetingDetails(db.EmbeddedDocument):
+
+    _id = db.StringField()
+    name = db.StringField()
+    api_created = db.BooleanField()
+    privacy = db.StringField()
+    url = db.StringField()
+    created_at = db.DateTimeField()
+    config = db.EmbeddedDocumentField(MeetingConfig)
+
+
 class BlacklistedToken(db.DynamicDocument):
     jti = db.StringField()
     revoked = db.BooleanField()
@@ -79,6 +105,7 @@ class User(db.DynamicDocument, HelperMixin):
         user.save()
         user_organization = Organization(name=user.email)
         user_organization.save()
+        user_organization.create_instant_meeting_link()
         user.default_organization = user_organization
         user.organizations.append(user_organization)
         user.save()
@@ -128,6 +155,14 @@ class Member(db.DynamicDocument, HelperMixin):
 class Organization(db.DynamicDocument, HelperMixin):
     name = db.StringField()
     max_participants_per_meeting = db.IntField(default=20)
+    permanent_meeting_details = db.EmbeddedDocumentField(MeetingDetails)
+
+    def create_instant_meeting_link(self):
+        orch = CallOrchestrator()
+        details = orch.create_permanent_room()
+        meeting_details = MeetingDetails(**details)
+        self.permanent_meeting_details = meeting_details
+        self.save()
 
     def get_upcoming_event_count(self, now=None):
         now = datetime.datetime.utcnow()
@@ -153,33 +188,8 @@ class Organization(db.DynamicDocument, HelperMixin):
             "upcoming_events": self.get_upcoming_event_count(),
             "past_events": self.get_past_event_count(),
             "active_members": self.get_active_member_count(),
+            "instantMeetingLink": self.permanent_meeting_details.url,
         }
-
-
-@utils.logged
-class MeetingConfig(db.EmbeddedDocument):
-    start_audio_off = db.BooleanField(
-        default=False,
-    )
-    start_video_off = db.BooleanField(default=False)
-    exp = db.DateTimeField()
-    nbf = db.DateTimeField()
-    max_participants = db.IntField()
-    eject_after_elapsed = db.IntField()
-    eject_at_room_exp = db.BooleanField()
-    lang = db.StringField()
-
-
-@utils.logged
-class MeetingDetails(db.EmbeddedDocument):
-
-    _id = db.StringField()
-    name = db.StringField()
-    api_created = db.BooleanField()
-    privacy = db.StringField()
-    url = db.StringField()
-    created_at = db.DateTimeField()
-    config = db.EmbeddedDocumentField(MeetingConfig)
 
 
 @utils.logged
@@ -207,6 +217,7 @@ class VirtualEvent(db.DynamicDocument, HelperMixin):
     canceled_by = db.ReferenceField("User")
     alert_settings = db.ReferenceField("AlertSettings")
     meeting_details = db.EmbeddedDocumentField(MeetingDetails)
+    reminders_sent = db.ListField(db.StringField(), default=[])
 
     def create_meeting_event(self):
         orch = CallOrchestrator()
@@ -221,8 +232,19 @@ class VirtualEvent(db.DynamicDocument, HelperMixin):
         self.save()
 
     @staticmethod
-    def get_organization_events(organization):
-        events = VirtualEvent.objects(canceled__ne=True, organization=organization)
+    def get_organization_events(organization, event_type=None):
+        if not event_type:
+            events = VirtualEvent.objects(canceled__ne=True, organization=organization)
+        elif event_type == "past":
+            now = datetime.datetime.utcnow()
+            events = VirtualEvent.objects(
+                canceled__ne=True, organization=organization, date__lt=now
+            )
+        elif event_type == "upcoming":
+            now = datetime.datetime.utcnow()
+            events = VirtualEvent.objects(
+                canceled__ne=True, organization=organization, date__gte=now
+            )
         return events
 
     @staticmethod
