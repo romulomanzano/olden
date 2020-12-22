@@ -1,8 +1,5 @@
-import requests
-import config
 from models import VirtualEvent
 from utils import logged
-import cerberus
 from communications.communications import Notifier
 from communications import communications_mapping
 import datetime
@@ -45,7 +42,7 @@ class ReminderOrchestrator:
                             profile=attendee.contact_profile,
                             idempotency_key=None,
                         )
-                    except Exception as e:
+                    except Exception as e:  # skipcq: PYL-W0703
                         self.logger.exception(e)
                 event.reminders_sent.append(self.reminder_name)
                 event.save()
