@@ -10,6 +10,7 @@ export default new Vuex.Store({
     userId: null,
     userEmail: null,
     organizationId: null,
+    organizationName: null,
   },
   mutations: {
     authUser(state, userData) {
@@ -17,6 +18,7 @@ export default new Vuex.Store({
       state.userId = userData.userId;
       state.userEmail = userData.userEmail;
       state.organizationId = userData.organizationId;
+      state.organizationName = userData.organizationName;
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${userData.userToken}`;
@@ -26,19 +28,37 @@ export default new Vuex.Store({
       state.userId = null;
       state.userEmail = null;
       state.organizationId = null;
+      state.organizationName = null;
       axios.defaults.headers.common["Authorization"] = null;
     },
-    setOrganization(state, organizationId) {
-      state.organizationId = organizationId;
+    updateOrganizationData(state, data) {
+      state.organizationId = data.organizationId;
+      state.organizationName = data.organizationName;
     },
   },
   actions: {
+    setOrganization({ commit }, organizationDetails) {
+      try {
+        commit("updateOrganizationData", organizationDetails);
+        localStorage.setItem(
+          "organizationId",
+          organizationDetails.organizationId
+        );
+        localStorage.setItem(
+          "organizationName",
+          organizationDetails.organizationName
+        );
+      } catch (error) {
+        Vue.$log.debug(error);
+      }
+    },
     authenticateUser({ commit, dispatch }, authData) {
       commit("authUser", {
         userToken: authData.userToken,
         userId: authData.userId,
         userEmail: authData.userEmail,
         organizationId: authData.organizationId,
+        organizationName: authData.organizationName,
       });
       dispatch("setLogoutTimer", authData.expiresIn);
       const now = new Date();
@@ -50,6 +70,7 @@ export default new Vuex.Store({
       localStorage.setItem("expirationDate", expirationDate);
       localStorage.setItem("userEmail", authData.userEmail);
       localStorage.setItem("organizationId", authData.organizationId);
+      localStorage.setItem("organizationName", authData.organizationName);
       router.replace("/dashboard");
     },
     setLogoutTimer({ commit }, expirationTime) {
@@ -65,6 +86,17 @@ export default new Vuex.Store({
           expiresIn: data.expiresIn,
           userEmail: data.userEmail,
           organizationId: data.organizationId,
+          organizationName: data.organizationName,
+        });
+      } catch (error) {
+        Vue.$log.debug(error);
+      }
+    },
+    async updateOrganization({ dispatch }, data) {
+      try {
+        await dispatch("setOrganization", {
+          organizationId: data.organizationId,
+          organizationName: data.organizationName,
         });
       } catch (error) {
         Vue.$log.debug(error);
@@ -84,11 +116,13 @@ export default new Vuex.Store({
       const userId = localStorage.getItem("userId");
       const userEmail = localStorage.getItem("userEmail");
       const organizationId = localStorage.getItem("organizationId");
+      const organizationName = localStorage.getItem("organizationName");
       commit("authUser", {
         userToken: userToken,
         userId: userId,
         userEmail: userEmail,
         organizationId: organizationId,
+        organizationName: organizationName,
       });
       router.replace("/dashboard");
     },
@@ -99,6 +133,7 @@ export default new Vuex.Store({
       localStorage.removeItem("userToken");
       localStorage.removeItem("userEmail");
       localStorage.removeItem("organizationId");
+      localStorage.removeItem("organizationName");
       router.replace("/login");
     },
   },

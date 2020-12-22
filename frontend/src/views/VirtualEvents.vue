@@ -20,13 +20,16 @@
                 <tabs>
                   <tab-pane title="Scheduled Events">
                     <div class="col">
-                      <virtual-events-table title="Upcoming Events">
+                      <virtual-events-table
+                        type="upcoming"
+                        title="Upcoming Events"
+                      >
                       </virtual-events-table>
                     </div>
                   </tab-pane>
                   <tab-pane title="Past Events">
                     <div class="col">
-                      <virtual-events-table title="Past Events">
+                      <virtual-events-table type="past" title="Past Events">
                       </virtual-events-table>
                     </div>
                   </tab-pane>
