@@ -7,6 +7,8 @@ from app_blueprints.app_organization import app_organization_blueprint
 from app_blueprints.app_utils import app_utils_blueprint
 from app_blueprints.app_profile import app_profile_blueprint
 from app_blueprints.app_meet import app_meet_blueprint
+from utils import get_generic_logger
+import mongoengine
 
 # register blueprints
 app.register_blueprint(app_auth_blueprint, url_prefix="/auth")
@@ -15,10 +17,13 @@ app.register_blueprint(app_utils_blueprint, url_prefix="/utils")
 app.register_blueprint(app_profile_blueprint, url_prefix="/profile")
 app.register_blueprint(app_meet_blueprint, url_prefix="/meet")
 
-from utils import get_generic_logger
-import mongoengine
 
 logger = get_generic_logger(__name__)
+
+
+@app.route("/debug-sentry")
+def trigger_error():
+    return 1 / 0
 
 
 @jwt.token_in_blacklist_loader

@@ -11,6 +11,32 @@ import VueMoment from "vue-moment";
 import numeral from "numeral";
 import VueConstants from "vue-constants";
 import VueClipboard from "vue-clipboard2";
+import * as Sentry from "@sentry/browser";
+import { Integrations } from "@sentry/tracing";
+import { Vue as VueIntegration } from "@sentry/integrations";
+import { Integrations as ApmIntegrations } from "@sentry/apm";
+
+Sentry.init({
+  Vue,
+  dsn:
+    "https://07c798e2e1de4ab2bb95dd505836d4a6@o495064.ingest.sentry.io/5567215",
+  environment: process.env.NODE_ENV,
+  autoSessionTracking: true,
+  integrations(integrations) {
+    integrations.push(
+      new VueIntegration({
+        attachProps: true,
+        logErrors: true,
+      })
+    );
+    integrations.push(new ApmIntegrations.Tracing());
+    integrations.push(new Integrations.BrowserTracing());
+    return integrations;
+  },
+  // We recommend adjusting this value in production, or using tracesSampler
+  // for finer control
+  tracesSampleRate: 1.0,
+});
 
 Vue.config.productionTip = false;
 const isProduction = process.env.NODE_ENV === "production";

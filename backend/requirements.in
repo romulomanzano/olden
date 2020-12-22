@@ -18,8 +18,8 @@ redis
 requests
 rq
 rq-scheduler
-sentry-sdk
 uszipcode
 trycourier
 python-jose
 pytz
+sentry-sdk[flask]
