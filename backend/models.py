@@ -11,6 +11,22 @@ import datetime
 import constants
 from flask_jwt_extended import create_access_token, JWTManager
 from call_orchestrator import CallOrchestrator
+from sentry_sdk.integrations.flask import FlaskIntegration
+import sentry_sdk
+
+if config.SENTRY_DSN:
+    if config.MODE == "production":
+        traces_sample_rate = 0.10
+    else:
+        traces_sample_rate = 0
+    sentry_sdk.init(
+        dsn=config.SENTRY_DSN,
+        integrations=[FlaskIntegration()],
+        environment=config.MODE,
+        attach_stacktrace=True,
+        send_default_pii=True,
+        traces_sample_rate=traces_sample_rate,
+    )
 
 app = Flask(__name__)
 app.logger.setLevel(logging.DEBUG)
