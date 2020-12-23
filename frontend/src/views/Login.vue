@@ -24,7 +24,7 @@ export default {
           fontFamily: "Roboto",
           fontSize: 16,
           width: 200,
-          color: "#102542",
+          color: "#626262",
           fontWeight: 600,
         },
         input_text_container_default: {
@@ -44,7 +44,7 @@ export default {
           height: 30,
           fontWeight: 600,
           fontSize: 14,
-          backgroundColor: "#3d5afe",
+          backgroundColor: "#8965e0",
         },
       },
 

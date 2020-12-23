@@ -105,8 +105,20 @@
         <!--Navigation-->
         <ul class="navbar-nav mb-md-3">
           <li class="nav-item">
-            <a class="nav-link" href="">
-              <i class="fa fa-question-circle"></i> Contact Support
+            <a
+              class="nav-link"
+              @click="comingSoonMessage('This feature is not yet available.')"
+            >
+              <i class="fa fa-directions"></i> Platform Tour
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="https://soundcare.typeform.com/to/hEebmPj3"
+              target="_blank"
+            >
+              <i class="fa fa-question-circle"></i> Contact Us
             </a>
           </li>
         </ul>
@@ -125,7 +137,7 @@ export default {
   props: {
     logo: {
       type: String,
-      default: "img/icons/dash-logo-blue.png",
+      default: "img/icons/secondary-logo.png",
       description: "Olden logo",
     },
     autoClose: {
