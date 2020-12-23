@@ -126,7 +126,7 @@
               size="sm"
               icon="fa fa-pen"
               @click="editMode(row)"
-              >Edit</base-button
+              >Manage</base-button
             >
             <base-button
               type="danger"

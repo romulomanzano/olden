@@ -15,6 +15,9 @@ import * as Sentry from "@sentry/browser";
 import { Integrations } from "@sentry/tracing";
 import { Vue as VueIntegration } from "@sentry/integrations";
 import { Integrations as ApmIntegrations } from "@sentry/apm";
+import VueTour from "vue-tour";
+
+require("vue-tour/dist/vue-tour.css");
 
 Sentry.init({
   Vue,
@@ -58,6 +61,7 @@ Vue.use(VueLogger, options);
 Vue.use(VueMoment);
 Vue.use(VueConstants);
 Vue.use(VueClipboard);
+Vue.use(VueTour);
 
 //Add some filters
 Vue.filter("capitalize", function (value) {

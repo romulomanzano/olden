@@ -2,6 +2,21 @@
   <div>
     <base-header type="gradient-primary" class="pb-6 pb-8 pt-5 pt-md-8">
       <!-- Card stats -->
+      <base-alert type="default" dismissible>
+        <span class="alert-inner--text"
+          ><strong>Free Trial:</strong> you have access to all the features
+          during the trial period. We'll reach out once your trial
+          expires.</span
+        >
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </base-alert>
       <div class="row">
         <div class="col-xl-4 col-lg-6" @click="doCopy(instantMeetingLink)">
           <stats-card

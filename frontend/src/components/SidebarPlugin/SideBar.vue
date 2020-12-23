@@ -105,11 +105,8 @@
         <!--Navigation-->
         <ul class="navbar-nav mb-md-3">
           <li class="nav-item">
-            <a
-              class="nav-link"
-              @click="comingSoonMessage('This feature is not yet available.')"
-            >
-              <i class="fa fa-directions"></i> Platform Tour
+            <a id="platform-tour" class="nav-link" @click="startTour()">
+              <i class="fa fa-directions"></i> Menu Tour
             </a>
           </li>
           <li class="nav-item">
@@ -123,6 +120,7 @@
           </li>
         </ul>
       </div>
+      <v-tour name="myTour" :steps="steps" class="tourbox"></v-tour>
     </div>
   </nav>
 </template>
@@ -133,6 +131,53 @@ export default {
   name: "sidebar",
   components: {
     NavbarToggleButton,
+  },
+  data() {
+    return {
+      steps: [
+        {
+          target: "#platform-tour", // We're using document.querySelector() under the hood
+          header: {
+            title: "Getting Started",
+          },
+          content: `Take the Tour`,
+          params: {
+            placement: "top", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: "#dashboard-element", // We're using document.querySelector() under the hood
+          header: {
+            title: "Dashboard",
+          },
+          content: `Account Summary`,
+          params: {
+            placement: "bottom", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: "#profile-element",
+          content: "Update your profile",
+          params: {
+            placement: "top", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: "#virtual-events-element",
+          content: "Create and manage events",
+          params: {
+            placement: "bottom", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+        {
+          target: "#members-element",
+          content: "Frequent event attendees",
+          params: {
+            placement: "bottom", // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+        },
+      ],
+    };
   },
   props: {
     logo: {
@@ -159,6 +204,9 @@ export default {
     };
   },
   methods: {
+    startTour() {
+      this.$tours["myTour"].start();
+    },
     comingSoonMessage(featureName) {
       this.$message.info(featureName);
     },
