@@ -37,8 +37,17 @@
               </div>
 
               <div class="col">
+                <h6
+                  class="heading-small text-muted mb-4"
+                  @click="doCopy(eventInfo.meeting_details.url)"
+                >
+                  Meeting Link: {{ eventInfo.meeting_details.url }}
+                </h6>
+              </div>
+
+              <div class="col">
                 <h6 class="heading-small text-muted mb-4">
-                  Duration: {{ eventInfo.estimated_duration_minutes }} minutes
+                  Reminders will be sent 1hr and 5mins before the event
                 </h6>
               </div>
             </div>
@@ -201,6 +210,10 @@ export default {
           this.getVirtualEvent();
         })
         .catch((error) => this.$message.error(error.response.data.message));
+    },
+    doCopy(text) {
+      this.$copyText(text);
+      this.$message.success("Meeting URL Copied to Clipboard");
     },
     getVirtualEvent() {
       axios

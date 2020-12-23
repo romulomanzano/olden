@@ -7,6 +7,7 @@
     >
       <template slot="links">
         <sidebar-item
+          id="dashboard-element"
           :link="{
             name: 'Dashboard',
             icon: 'ni ni-tv-2 text-primary',
@@ -15,6 +16,7 @@
         />
 
         <sidebar-item
+          id="profile-element"
           :link="{
             name: 'User Profile',
             icon: 'fa fa-user-cog text-blue',
@@ -22,6 +24,7 @@
           }"
         />
         <sidebar-item
+          id="virtual-events-element"
           :link="{
             name: 'Virtual Events',
             icon: 'fa fa-life-ring text-primary',
@@ -29,6 +32,7 @@
           }"
         />
         <sidebar-item
+          id="members-element"
           :link="{
             name: 'Members',
             icon: 'fa fa-user-plus text-purple',
