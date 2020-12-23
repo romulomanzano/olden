@@ -9,10 +9,12 @@ import argparse
 
 @logged
 class ReminderOrchestrator:
-    def __init__(self, reminder_name, minutes_from_now):
+    def __init__(self, reminder_name, minutes_from_now, skip_if_in_minutes_from_now):
         self.reminder_name = reminder_name
         self.minutes_from_now = minutes_from_now
         self.now = datetime.datetime.utcnow()
+        if skip_if_in_minutes_from_now:
+            self.now = self.now + relativedelta(minutes=skip_if_in_minutes_from_now)
 
     def send_reminders(
         self,
@@ -68,7 +70,11 @@ if __name__ == "__main__":
         "--reminder-name",
         help="Choose reminder name",
         required=True,
-        choices=["upcoming_event_one_hour", "upcoming_event_five_minutes"],
+        choices=[
+            "upcoming_event_one_hour",
+            "upcoming_event_five_minutes",
+            "all_reminders",
+        ],
         dest="reminder_name",
     )
 
@@ -82,5 +88,16 @@ if __name__ == "__main__":
         elif args.reminder_name == "upcoming_event_five_minutes":
             rm = ReminderOrchestrator(
                 communications_mapping.EVENT_REMINDER_5MINS_BEFORE, 5
+            )
+            rm.send_reminders()
+        elif args.reminder_name == "all_reminders":
+            # 5 min first
+            rm = ReminderOrchestrator(
+                communications_mapping.EVENT_REMINDER_5MINS_BEFORE, 5, None
+            )
+            rm.send_reminders()
+            # 1 hr then
+            rm = ReminderOrchestrator(
+                communications_mapping.EVENT_REMINDER_1HR_BEFORE, 60, 5
             )
             rm.send_reminders()

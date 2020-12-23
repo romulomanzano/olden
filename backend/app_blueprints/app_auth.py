@@ -36,7 +36,7 @@ def login(name=None):
                     "expiresIn": config.JWT_ACCESS_TOKEN_EXPIRES,
                     "userEmail": user.email,
                     "organizationId": str(user.default_organization.id),
-                    "organizationName": str(user.default_organization.name),
+                    "organizationName": user.default_organization.name,
                 }
             ),
             200,

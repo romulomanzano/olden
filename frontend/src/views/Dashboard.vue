@@ -53,7 +53,7 @@
             <div class="text-center text-muted mb-4">
               <h3>Enter Organization Name</h3>
             </div>
-            <form role="form">
+            <form role="form" @submit.prevent="">
               <base-input
                 alternative
                 class="mb-3"
@@ -159,8 +159,7 @@ export default {
   },
   mounted() {
     this.getAccountSummary();
-    this.organizationNameMissing =
-      this.$store.state.organizationName === undefined;
+    this.organizationNameMissing = this.$store.state.organizationName === null;
   },
 };
 </script>

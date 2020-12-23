@@ -6,7 +6,7 @@
           <div class="text-center text-muted mb-4">
             <small>Meeting Url</small>
           </div>
-          <form role="form">
+          <form role="form" @submit.prevent="">
             <base-input
               alternative
               type="text"
