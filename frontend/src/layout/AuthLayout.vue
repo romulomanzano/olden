@@ -16,7 +16,7 @@
           <div class="row">
             <div class="col-6 collapse-brand">
               <router-link to="/">
-                <img src="img/icons/dash-logo-blue.png" />
+                <img src="img/icons/secondary-logo.png" />
               </router-link>
             </div>
             <div class="col-6 collapse-close">
