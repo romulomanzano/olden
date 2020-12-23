@@ -81,7 +81,7 @@
                     <div class="text-center text-muted mb-4">
                       <h3>New Event Name</h3>
                     </div>
-                    <form role="form">
+                    <form role="form" @submit.prevent="">
                       <base-input
                         alternative
                         class="mb-3"

@@ -119,7 +119,7 @@ class User(db.DynamicDocument, HelperMixin):
             registered=datetime.datetime.utcnow(),
         )
         user.save()
-        user_organization = Organization(name=user.email)
+        user_organization = Organization()
         user_organization.save()
         user_organization.create_instant_meeting_link()
         user.default_organization = user_organization
