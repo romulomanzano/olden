@@ -130,7 +130,7 @@ class User(db.DynamicDocument, HelperMixin):
         user.default_organization = user_organization
         user.organizations.append(user_organization)
         # notify user registered
-        if not TEST:
+        if not config.TEST:
             Notifier().notify_organizer("New user registered {}".format(user.email))
         user.save()
 
