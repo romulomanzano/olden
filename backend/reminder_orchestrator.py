@@ -46,6 +46,22 @@ class ReminderOrchestrator:
                         )
                     except Exception as e:  # skipcq: PYL-W0703
                         self.logger.exception(e)
+                # notify organizer
+                try:
+                    notifier.notify(
+                        comms_name=self.reminder_name,
+                        recipient_id=str(event.created_by.id),
+                        data={
+                            "event_name": event.name,
+                            "organization_name": event.organization.name,
+                            "first_name": event.organization.name,
+                            "meeting_url": event.meeting_details.url,
+                        },
+                        profile=event.created_by.contact_profile,
+                        idempotency_key=None,
+                    )
+                except Exception as e:  # skipcq: PYL-W0703
+                    self.logger.exception(e)
                 event.reminders_sent.append(self.reminder_name)
                 event.save()
             self.logger.info(

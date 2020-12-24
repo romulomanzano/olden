@@ -11,8 +11,9 @@ DATABASE_NAME = "olden"
 LOG_LEVEL = "INFO"
 API_ENDPOINT = "localhost:5000"
 DATABASE_CONNECTION_STRING = os.getenv(
-    "DATABASE_CONNECTION_STRING", "mongodb://localhost/{}".format(DATABASE_NAME)
-)
+    "DATABASE_CONNECTION_STRING"
+) or "mongodb://localhost/{}".format(DATABASE_NAME)
+
 COURIER_API_TOKEN = os.getenv("COURIER_API_TOKEN")
 FLASK_SECRET_KEY = os.getenv("FLASK_SECRET_KEY")
 FLASK_SALT = os.getenv("FLASK_SALT")
@@ -49,3 +50,7 @@ MEETING_ROOM_DEFAULT_PREFIX = ""
 COURIER_API_TOKEN = os.getenv("COURIER_API_TOKEN")
 # sentry config
 SENTRY_DSN = os.getenv("SENTRY_DSN")
+ADMIN_NOTIFICATION_PROFILE = {
+    "email": "hi@olden.ai",
+    "phone_number": os.getenv("ADMIN_PHONE_NUMBER"),
+}
