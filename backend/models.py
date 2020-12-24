@@ -9,6 +9,7 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 import datetime
 import constants
+from communications.communications import Notifier
 from flask_jwt_extended import create_access_token, JWTManager
 from call_orchestrator import CallOrchestrator
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -102,6 +103,10 @@ class User(db.DynamicDocument, HelperMixin):
     address = db.ReferenceField("Address")
     phone_number = db.StringField()
 
+    @property
+    def contact_profile(self):
+        return {"phone_number": self.phone_number, "email": self.email}
+
     def create_access_token(self):
         """Generate access token based on what's considered unique identifier"""
         return create_access_token(identity=dict(id=str(self.id)))
@@ -124,7 +129,11 @@ class User(db.DynamicDocument, HelperMixin):
         user_organization.create_instant_meeting_link()
         user.default_organization = user_organization
         user.organizations.append(user_organization)
+        # notify user registered
+        if not TEST:
+            Notifier().notify_organizer("New user registered {}".format(user.email))
         user.save()
+
         return user
 
     def set_personal_details_from_web_data(self, data):

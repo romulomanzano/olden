@@ -5,6 +5,7 @@ from config import COURIER_API_TOKEN
 import utils
 from trycourier import Courier
 from .communications_mapping import COMMS_TO_EVENT_MAP
+import config
 
 
 @utils.logged
@@ -23,6 +24,18 @@ class Notifier:
             data=data,
             profile=profile,
             idempotency_key=idempotency_key,
+        )
+        return resp
+
+    def notify_organizer(self, message):
+        """Send communications via courier"""
+        event_id = COMMS_TO_EVENT_MAP["generic_organizer_notification"]
+        resp = self.client.send(
+            event=event_id,
+            recipient="organizer",
+            data={"message": message},
+            profile=config.ADMIN_NOTIFICATION_PROFILE,
+            idempotency_key=None,
         )
         return resp
 
