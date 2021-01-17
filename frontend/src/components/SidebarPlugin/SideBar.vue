@@ -61,7 +61,7 @@
         <!--coming soon-->
         <hr class="my-3" />
         <!--Heading-->
-        <h6 class="navbar-heading text-muted">Comming Soon</h6>
+        <h6 class="navbar-heading text-muted">Coming Soon</h6>
         <!--Navigation-->
         <ul class="navbar-nav mb-md-3">
           <li>
