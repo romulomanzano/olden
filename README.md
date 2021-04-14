@@ -52,3 +52,6 @@ Hosted on render.com. Use the below build command:
 ## Secret Management
 - https://doppler.com
 
+# Deployment
+Both frontend and backend services are containerized and deployed via https://render.com
+
