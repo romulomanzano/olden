@@ -1,6 +1,6 @@
 # Olden
 
-Happy as in the olden days.
+Sample app to allow adult day care facilities to remain connected with their customers during the pandemic.
 
 
 # Backend
@@ -36,3 +36,19 @@ Hosted on render.com. Use the below build command:
 ### Stack:
 - Flask
 - Gunicorn
+
+# Frontend
+
+- VueJs + Javascript
+
+
+# Relevant API SaaS integrations
+
+- https://daily.co
+- https://cotter.app
+- https://courier.com (and Twilio + Postmark to handle comms)
+- https://cloud.mongodb.com
+
+## Secret Management
+- https://doppler.com
+
